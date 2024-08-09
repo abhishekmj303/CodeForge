@@ -4,6 +4,7 @@ import Playground from "./pages/Playground";
 import Arena from "./pages/Arena";
 import Battleground from "./pages/Battleground";
 import Navbar from "@/components/Navbar";
+import AddContestPage from "./pages/AddContestPage";
 import { Separator } from "@/components/ui/separator";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/playground" element={<Playground />} />
             <Route path="/arena" element={<Arena />} />
             <Route path="/battleground" element={<Battleground />} />
+            <Route path="/add-contest" element={<AddContestPage />} />
           </Routes>
         </main>
       </div>

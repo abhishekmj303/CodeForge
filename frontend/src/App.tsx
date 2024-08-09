@@ -1,11 +1,25 @@
-import { Button } from "@/components/ui/button";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Playground from "./pages/Playground";
+import Arena from "./pages/Arena";
+import Battleground from "./pages/Battleground";
+import Navbar from "@/components/Navbar";
 
 function App() {
   return (
-    <>
-      <h1>Hello, CodeForge!</h1>
-      <Button>Click me!</Button>
-    </>
+    <Router>
+      <div>
+        <Navbar />
+        <main className="p-5">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/playground" element={<Playground />} />
+            <Route path="/arena" element={<Arena />} />
+            <Route path="/battleground" element={<Battleground />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 

@@ -1,17 +1,14 @@
-import { useRef, useState, useEffect, FC } from "react";
+import { useRef, useState, FC } from "react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import ThemeSelector from "./ThemeSelector";
 import * as monaco from 'monaco-editor';
 
-// Define the available themes
 const THEMES = {
-  'mocha': 'Custom Dark',
   'vs-dark': 'Visual Studio Dark',
   light: 'Light',
 } as const;
 
-// Define the type for Theme
 type Theme = keyof typeof THEMES;
 type Language = 'javascript' | 'typescript' | 'python' | 'java' | 'csharp' | 'php';
 
@@ -19,7 +16,7 @@ const CodeEditor: FC = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
   const [language, setLanguage] = useState<Language>("javascript");
-  const [theme, setTheme] = useState<Theme>("mocha");
+  const [theme, setTheme] = useState<Theme>("vs-dark");
 
   const CODE_SNIPPETS: Record<Language, string> = {
     javascript: `\nfunction greet(name) {\n\tconsole.log("Hello, " + name + "!");\n}\n\ngreet("Alex");\n`,
@@ -36,31 +33,6 @@ const CodeEditor: FC = () => {
     editor.focus();
   };
 
-  useEffect(() => {
-    monaco.editor.defineTheme('mocha', {
-      base: 'vs-dark', // using 'vs-dark' as the base for a dark theme
-      inherit: true, // inherit from the base theme
-      rules: [
-          { token: 'comment', foreground: 'd4af79', fontStyle: 'italic' }, 
-          { token: 'keyword', foreground: 'e08c75', fontStyle: 'bold' },
-          { token: 'string', foreground: 'a3be8c' }, 
-          { token: 'number', foreground: 'b48ead' }, 
-          { token: 'identifier', foreground: 'ebcb8b' }, 
-          { token: 'delimiter', foreground: '8fbcbb' }, 
-          { token: 'type', foreground: 'd08770' },
-      ],
-      colors: {
-          'editor.background': '#3B3228', // Mocha-like dark brown
-          'editor.foreground': '#F5F5DC', // Mocha-like beige
-          'editorCursor.foreground': '#F8F8F2', // Light cursor color
-          'editorLineNumber.foreground': '#756b5e', // Mocha-like muted brown
-          'editor.selectionBackground': '#5a4b3f', // Mocha-like selection color
-          'editor.inactiveSelectionBackground': '#4e4238', // Mocha-like inactive selection color
-          // add more editor colors here
-      },
-  });
-  }, []);
-
   const onSelectLanguage = (language: Language) => {
     setLanguage(language);
     setValue(CODE_SNIPPETS[language]);
@@ -71,16 +43,19 @@ const CodeEditor: FC = () => {
   };
 
   return (
-    <div className="flex space-x-4">
+    <div className="relative flex flex-col h-screen">
+    <div className="flex justify-between p-2 bg-gray-900 text-white">
       <LanguageSelector language={language} onSelect={onSelectLanguage} />
       <ThemeSelector theme={theme} onSelect={onSelectTheme} />
+    </div>
+    <div className="flex-1">
       <Editor
         options={{
           minimap: {
             enabled: false,
           },
         }}
-        height="75vh"
+        height="calc(100vh - 60px)" 
         theme={theme}
         language={language}
         defaultValue={CODE_SNIPPETS[language]}
@@ -89,6 +64,7 @@ const CodeEditor: FC = () => {
         onChange={(value) => setValue(value || "")}
       />
     </div>
+  </div>
   );
 };
 

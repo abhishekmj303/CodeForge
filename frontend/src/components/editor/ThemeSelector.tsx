@@ -2,14 +2,11 @@ import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
 
-// Define the available themes
 const THEMES = {
-  'mocha': 'Custom Dark',
   'vs-dark': 'Visual Studio Dark',
   light: 'Light',
 } as const;
 
-// Define the type for Theme
 type Theme = keyof typeof THEMES;
 
 interface ThemeSelectorProps {
@@ -21,8 +18,8 @@ const ThemeSelector: FC<ThemeSelectorProps> = ({ theme, onSelect }) => {
   const themes = Object.entries(THEMES);
 
   return (
-    <div className="ml-2 mb-4">
-      <p className="mb-2 text-lg">Theme:</p>
+    <div className="flex items-center">
+      <p className="mr-2">Theme:</p>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button>{THEMES[theme]}</Button>

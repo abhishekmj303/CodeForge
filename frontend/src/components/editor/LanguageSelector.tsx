@@ -24,8 +24,8 @@ const ACTIVE_COLOR = "text-blue-400";
 
 const LanguageSelector: FC<LanguageSelectorProps> = ({ language, onSelect }) => {
   return (
-    <div className="ml-2 mb-4">
-      <p className="mb-2 text-lg">Language:</p>
+    <div className="flex items-center">
+      <p className="mr-2">Language:</p>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary">{language}</Button>

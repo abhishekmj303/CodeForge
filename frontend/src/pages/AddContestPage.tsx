@@ -297,6 +297,9 @@ export default function AddContestPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      <Button className="m-4">
+        Post
+      </Button>
     </div>
   );
 }

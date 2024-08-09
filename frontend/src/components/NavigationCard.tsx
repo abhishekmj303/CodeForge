@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { MoveRight } from "lucide-react";
-import { ArrowRight } from "lucide-react";
+import { MoveRight, ArrowRight } from "lucide-react";
 import classNames from "classnames";
 
 import { cn } from "@/lib/utils";

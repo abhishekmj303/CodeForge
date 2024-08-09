@@ -1,11 +1,16 @@
 import { FC } from "react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
-
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from "@/components/ui/dropdown-menu";
 const THEMES = {
-  'vs-dark': 'Visual Studio Dark',
-  light: 'Light',
+  "vs-dark": "Dark Theme",
+  light: "Light Theme",
 } as const;
+import { ChevronDown } from "lucide-react";
 
 type Theme = keyof typeof THEMES;
 
@@ -19,16 +24,23 @@ const ThemeSelector: FC<ThemeSelectorProps> = ({ theme, onSelect }) => {
 
   return (
     <div className="flex items-center">
-      <p className="mr-2">Theme:</p>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button>{THEMES[theme]}</Button>
+          <Button
+            className="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-slate-200"
+            size="sm"
+          >
+            {THEMES[theme]}
+            <ChevronDown className="w-4 h-4 ml-1" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-gray-900 text-white">
           {themes.map(([key, name]) => (
             <DropdownMenuItem
               key={key}
-              className={`hover:bg-gray-800 ${key === theme ? "bg-gray-800" : ""}`}
+              className={`hover:bg-gray-800 ${
+                key === theme ? "bg-gray-800" : ""
+              }`}
               onClick={() => onSelect(key as Theme)}
             >
               {name}

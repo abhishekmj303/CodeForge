@@ -68,13 +68,17 @@
   }
 }
 
+main {
+  height: 92vh;
+}
+
 .card-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  min-height: 70vh;
+  min-height: 87vh;
   padding: 1rem;
   gap: 1rem;
 }

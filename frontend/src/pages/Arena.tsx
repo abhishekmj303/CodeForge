@@ -1,10 +1,10 @@
 import React from "react";
+import Problems from "../components/arena/Problems";
 
 const Arena: React.FC = () => {
   return (
     <div>
-      <h2>Arena</h2>
-      <p>Welcome to the Arena page!</p>
+      <Problems />
     </div>
   );
 };

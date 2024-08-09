@@ -1,8 +1,20 @@
 import { FC } from "react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
-type Language = 'javascript' | 'typescript' | 'python' | 'java' | 'csharp' | 'php';
+type Language =
+  | "javascript"
+  | "typescript"
+  | "python"
+  | "java"
+  | "csharp"
+  | "php";
 
 interface LanguageSelectorProps {
   language: Language;
@@ -22,19 +34,29 @@ const languages = Object.entries(LANGUAGE_VERSIONS) as [Language, string][];
 
 const ACTIVE_COLOR = "text-blue-400";
 
-const LanguageSelector: FC<LanguageSelectorProps> = ({ language, onSelect }) => {
+const LanguageSelector: FC<LanguageSelectorProps> = ({
+  language,
+  onSelect,
+}) => {
   return (
     <div className="flex items-center">
-      <p className="mr-2">Language:</p>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary">{language}</Button>
+          <Button
+            className="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-slate-200"
+            size="sm"
+          >
+            {language}
+            <ChevronDown className="w-4 h-4 ml-1" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="bg-gray-900 text-white">
           {languages.map(([lang, version]) => (
             <DropdownMenuItem
               key={lang}
-              className={`hover:bg-gray-800 ${lang === language ? "bg-gray-800" : ""}`}
+              className={`hover:bg-gray-800 ${
+                lang === language ? "bg-gray-800" : ""
+              }`}
               onClick={() => onSelect(lang)}
             >
               <span className={`${lang === language ? ACTIVE_COLOR : ""}`}>

@@ -2,15 +2,21 @@ import { useRef, useState, FC } from "react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import ThemeSelector from "./ThemeSelector";
-import * as monaco from 'monaco-editor';
+import * as monaco from "monaco-editor";
 
 const THEMES = {
-  'vs-dark': 'Visual Studio Dark',
-  light: 'Light',
+  "vs-dark": "Visual Studio Dark",
+  light: "Light",
 } as const;
 
 type Theme = keyof typeof THEMES;
-type Language = 'javascript' | 'typescript' | 'python' | 'java' | 'csharp' | 'php';
+type Language =
+  | "javascript"
+  | "typescript"
+  | "python"
+  | "java"
+  | "csharp"
+  | "php";
 
 const CodeEditor: FC = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -44,27 +50,27 @@ const CodeEditor: FC = () => {
 
   return (
     <div className="relative flex flex-col h-screen">
-    <div className="flex justify-between p-2 bg-gray-900 text-white">
-      <LanguageSelector language={language} onSelect={onSelectLanguage} />
-      <ThemeSelector theme={theme} onSelect={onSelectTheme} />
+      <div className="flex justify-between p-2 bg-[#2d2d2d] text-white">
+        <ThemeSelector theme={theme} onSelect={onSelectTheme} />
+        <LanguageSelector language={language} onSelect={onSelectLanguage} />
+      </div>
+      <div className="flex-1">
+        <Editor
+          options={{
+            minimap: {
+              enabled: false,
+            },
+          }}
+          height="calc(100vh - 60px)"
+          theme={theme}
+          language={language}
+          defaultValue={CODE_SNIPPETS[language]}
+          onMount={onMount}
+          value={value}
+          onChange={(value) => setValue(value || "")}
+        />
+      </div>
     </div>
-    <div className="flex-1">
-      <Editor
-        options={{
-          minimap: {
-            enabled: false,
-          },
-        }}
-        height="calc(100vh - 60px)" 
-        theme={theme}
-        language={language}
-        defaultValue={CODE_SNIPPETS[language]}
-        onMount={onMount}
-        value={value}
-        onChange={(value) => setValue(value || "")}
-      />
-    </div>
-  </div>
   );
 };
 

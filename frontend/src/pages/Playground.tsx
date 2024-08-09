@@ -30,7 +30,9 @@ const Playground: React.FC = () => {
 
   const handleRun = async () => {
     try {
-      
+      console.log(code);
+      console.log(language);
+      console.log(inputValue);
       const mappedLanguage = mapLanguage(language);
       const response = await axios.post("http://127.0.0.1:8000/run", {
         source_code: code,
@@ -39,6 +41,7 @@ const Playground: React.FC = () => {
       });
 
       const data = response.data;
+      console.log(data);
       if (data.stderr) {
         setOutputValue(data.stderr);
       } else {

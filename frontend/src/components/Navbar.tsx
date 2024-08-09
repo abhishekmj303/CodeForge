@@ -3,14 +3,8 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"; // Adjust the import path based on your project structure
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-} from "@/components/ui/dropdown-menu"; // Adjust import path if needed
-import { User } from "lucide-react";
 
 const Navbar: React.FC = () => {
   return (

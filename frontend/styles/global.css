@@ -31,7 +31,6 @@
     --chart-5: 27 87% 67%;
   }
 
-  /* .dark { */
   :root {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -67,4 +66,25 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.card-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.navigation-card {
+  transition: transform 0.3s ease, z-index 0s;
+  transform-origin: center;
+}
+
+.navigation-card:hover {
+  transform: scale(1.05);
+  z-index: 10;
 }

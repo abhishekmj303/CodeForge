@@ -4,12 +4,14 @@ import Playground from "./pages/Playground";
 import Arena from "./pages/Arena";
 import Battleground from "./pages/Battleground";
 import Navbar from "@/components/Navbar";
+import { Separator } from "@/components/ui/separator";
 
 function App() {
   return (
     <Router>
       <div>
         <Navbar />
+        <Separator orientation="horizontal" />
         <main className="p-5">
           <Routes>
             <Route path="/" element={<Home />} />

@@ -17,6 +17,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 
+import AddProblem from "./AddProblem";
+
 const Problems: React.FC = () => {
   const problems = [
     {
@@ -28,12 +30,15 @@ const Problems: React.FC = () => {
   ];
 
   return (
-    <Card className="w-[40rem]">
-      <CardHeader>
-        <CardTitle>Problem Statements</CardTitle>
-        <CardDescription>
-          A list of currently available problems.
-        </CardDescription>
+    <Card className="w-[40rem] m-5">
+      <CardHeader className="px-7 flex flex-row justify-between items-start">
+        <div>
+          <CardTitle>Problem Statements</CardTitle>
+          <CardDescription>
+            A list of currently available problems.
+          </CardDescription>
+        </div>
+        <AddProblem />
       </CardHeader>
       <CardContent>
         <Table className="">

@@ -56,14 +56,14 @@ const InputOutput: React.FC = () => {
         </div>
         <div className="flex gap-1">
           <Button
-            className="bg-[#423F3E] text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="bg-[#423F3E] text-white px-4 py-2 rounded hover:bg-[#555555]"
             size="sm"
           >
             <Play size={16} className="mr-2" />
             Run
           </Button>
           <Button
-            className="bg-[#423F3E] text-green-600 px-4 py-2 rounded hover:bg-[#2d2d3d]"
+            className="bg-[#423F3E] text-green-600 px-4 py-2 rounded hover:bg-[#555555]"
             size="sm"
           >
             <CloudUpload size={16} className="mr-2" />

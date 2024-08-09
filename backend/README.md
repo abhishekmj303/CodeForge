@@ -33,3 +33,37 @@ Inside backend folder, run:
 ```bash
 fastapi dev src/api
 ```
+
+## DB Schema
+
+### problems
+
+```
+id
+title
+difficulty
+problem_statement
+constraints
+owner
+contest_id
+```
+
+```
+id
+testcases
+```
+
+```
+id
+username
+status
+```
+
+### contensts
+
+```
+id
+title
+description
+owner
+```

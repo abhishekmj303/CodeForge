@@ -10,13 +10,14 @@ const THEMES = {
 } as const;
 
 type Theme = keyof typeof THEMES;
-type Language =
-  | "javascript"
-  | "python"
-  | "c"
-  | "cpp";
+type Language = "javascript" | "python" | "c" | "cpp";
 
-const CodeEditor: FC = () => {
+interface CodeEditorProps {
+  onLanguageChange: (language: Language) => void;
+  onCodeChange: (code: string) => void;
+}
+
+const CodeEditor: FC<CodeEditorProps> = ({ onLanguageChange, onCodeChange }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
   const [language, setLanguage] = useState<Language>("javascript");
@@ -37,10 +38,16 @@ const CodeEditor: FC = () => {
   const onSelectLanguage = (language: Language) => {
     setLanguage(language);
     setValue(CODE_SNIPPETS[language]);
+    onLanguageChange(language);
   };
 
   const onSelectTheme = (theme: Theme) => {
     setTheme(theme);
+  };
+
+  const handleCodeChange = (value: string | undefined) => {
+    setValue(value || "");
+    onCodeChange(value || "");
   };
 
   return (
@@ -62,7 +69,7 @@ const CodeEditor: FC = () => {
           defaultValue={CODE_SNIPPETS[language]}
           onMount={onMount}
           value={value}
-          onChange={(value) => setValue(value || "")}
+          onChange={handleCodeChange}
         />
       </div>
     </div>

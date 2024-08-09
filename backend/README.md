@@ -15,14 +15,17 @@ Relaunch terminal after installation.
 ```bash
 uv sync
 ```
+- `.venv` is created inside the backend folder. 
 
 ### Select python interpreter in VSCode
 
-- `.venv` is created inside the backend folder. 
+- Open a python file in VSCode.
 
-- Select the `.venv/bin/python` as the interpreter.
+- Go to the bottom right corner of VSCode. Click on Python version
 
-- Go to the bottom left corner of VSCode.
+- Select: Enter interpreter path > Find
+
+- Select the `.venv/bin/python` as the interpreter in the current folder.
 
 - Relaunch terminal after selecting.
 

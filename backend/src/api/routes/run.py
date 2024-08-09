@@ -79,12 +79,21 @@ def run(request_data: RequestData):
         if result.message:
             return ResponseData(message=result.message)
 
+    if result.timeout:
+        result.message = "Time limit exceeded"
+    elif result.return_code != 0:
+        result.message = "Runtime error"
+    else:
+        result.message = "Success"
     return result
 
 
 def run_command(command, input_string, timeout=5, memory_limit=100):
     def target():
         try:
+            if not input_string:
+                start_time = time.time()
+
             process = subprocess.Popen(
                 command,
                 stdin=subprocess.PIPE,
@@ -96,7 +105,8 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
                 ),
             )
 
-            start_time = time.time()
+            if input_string:
+                start_time = time.time()
             stdout, stderr = process.communicate(input=input_string, timeout=timeout)
             end_time = time.time()
 

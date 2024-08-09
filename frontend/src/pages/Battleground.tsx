@@ -9,21 +9,21 @@ const contests = [
     details: "Join us for a thrilling hackathon with exciting challenges.",
     date: "2024-08-15",
     owner: "Tech Innovators Inc.",
-    route: "/hackathon-2024",
+    id: "hackathon-2024",
   },
   {
     title: "Code Sprint",
     details: "A fast-paced coding sprint with algorithmic challenges.",
     date: "2024-09-10",
     owner: "Code Masters",
-    route: "/code-sprint",
+    id: "code-sprint",
   },
   {
     title: "AI Challenge",
     details: "Compete in AI challenges and showcase your skills.",
     date: "2024-10-05",
     owner: "AI Enthusiasts",
-    route: "/ai-challenge",
+    id: "ai-challenge",
   },
 ];
 
@@ -48,7 +48,7 @@ export default function MainPage() {
             details={contest.details}
             date={contest.date}
             owner={contest.owner}
-            route={contest.route}
+            route={`/battleground/${contest.id}`}
           />
         ))}
       </div>

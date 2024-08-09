@@ -6,6 +6,7 @@ import ProblemDetail from "./pages/ProblemDetail";
 import Battleground from "./pages/Battleground";
 import Navbar from "@/components/Navbar";
 import AddContestPage from "./pages/AddContestPage";
+import Contest from "./pages/Contest";
 import { Separator } from "@/components/ui/separator";
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
             <Route path="/arena/:problem_id" element={<ProblemDetail />} />{" "}
             {/* Dynamic Route */}
             <Route path="/battleground" element={<Battleground />} />
+            <Route path="/battleground/:contest_id" element={<Contest />} />{" "}
+            {/* Dynamic Route */}
             <Route path="/add-contest" element={<AddContestPage />} />
           </Routes>
         </main>

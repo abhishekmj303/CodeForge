@@ -28,7 +28,7 @@ const Playground: React.FC = () => {
           </div>
         </div>
       </ResizablePanel>
-      <ResizableHandle />
+      <ResizableHandle withHandle />
       <ResizablePanel defaultSize={50}>
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel defaultSize={55}>
@@ -51,7 +51,7 @@ const Playground: React.FC = () => {
                 </div>
             </div>
           </ResizablePanel>
-          <ResizableHandle />
+          <ResizableHandle withHandle />
           <ResizablePanel defaultSize={45}>
             <div className="flex flex-col h-full p-2 bg-black-200">
               <span className="font-semibold mb-2">Input</span>

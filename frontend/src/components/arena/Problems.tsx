@@ -60,7 +60,28 @@ const Problems: React.FC<Problems> = ({ type }) => {
                   <Link to={`/arena/${problem.id}`}>{problem.title}</Link>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Badge variant="secondary">{problem.difficulty}</Badge>
+                  {problem.difficulty.toLowerCase() === "easy" ? (
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-light text-[#14b8a6]"
+                    >
+                      {problem.difficulty}
+                    </Badge>
+                  ) : problem.difficulty.toLowerCase() === "medium" ? (
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-light text-[#f59e0b]"
+                    >
+                      {problem.difficulty}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-light text-[#ef4444]"
+                    >
+                      {problem.difficulty}
+                    </Badge>
+                  )}
                 </TableCell>
                 <TableCell className="text-right">{problem.status}</TableCell>
               </TableRow>

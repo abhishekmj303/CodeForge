@@ -39,12 +39,28 @@ const ProblemDescription: React.FC = () => {
       <div className="bg-muted/50 p-5 w-full h-full">
         <div className="flex items-center gap-2 text-xl mb-4">
           <p className="font-semibold">{problem.title}</p>
-          <Badge
-            variant="secondary"
-            className="text-[#14b8a6] font-light bg-[#31363F]"
-          >
-            {problem.difficulty}
-          </Badge>
+          {problem.difficulty === "Easy" ? (
+            <Badge
+              variant="secondary"
+              className="text-xs font-light text-[#14b8a6]"
+            >
+              {problem.difficulty}
+            </Badge>
+          ) : problem.difficulty === "Medium" ? (
+            <Badge
+              variant="secondary"
+              className="text-xs font-light text-[#f1c40f]"
+            >
+              {problem.difficulty}
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="text-xs font-light text-[#e74c3c]"
+            >
+              {problem.difficulty}
+            </Badge>
+          )}
         </div>
         <pre className="whitespace-pre-wrap mt-2 text-sm">
           {problem.description}

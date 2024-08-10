@@ -1,34 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Play, CloudUpload } from "lucide-react";
+import axiosInstance from "@/axiosInstance";
 
-const InputOutput: React.FC = () => {
+interface InputOutputProps {
+  problem_id: string;
+}
+
+interface TestCase {
+  id: string;
+  inputText: string;
+  outputText: string;
+}
+
+const InputOutput: React.FC<InputOutputProps> = ({ problem_id }) => {
   const [activeTestCaseId, setActiveTestCaseId] = useState<number>(0);
-
-  const [problem, setProblem] = useState({
-    examples: [
-      {
-        id: "1",
-        inputText: "2,7,11,15",
-        outputText: "0,1",
-      },
-      {
-        id: "2",
-        inputText: "3,2,4",
-        outputText: "1,2",
-      },
-      {
-        id: "3",
-        inputText: "3,3",
-        outputText: "0,1",
-      },
-      {
-        id: "custom",
-        inputText: "",
-        outputText: "",
-      },
-    ],
+  const [problem, setProblem] = useState<{ examples: TestCase[] }>({
+    examples: [],
   });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProblem = async () => {
+      try {
+        const response = await axiosInstance.get(`/problems/${problem_id}`);
+        const fetchedTestCases = response.data.testcases.map(
+          (testcase: any, index: number) => ({
+            id: String(index + 1),
+            inputText: testcase.input,
+            outputText: testcase.output,
+          })
+        );
+
+        setProblem({
+          examples: [
+            ...fetchedTestCases,
+            { id: "custom", inputText: "", outputText: "" },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching test cases:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblem();
+  }, [problem_id]);
 
   const handleInputChange = (id: string, newInput: string) => {
     setProblem((prev) => ({
@@ -47,6 +65,10 @@ const InputOutput: React.FC = () => {
       ),
     }));
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="w-full overflow-auto bg-[#18181b] h-full ">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import {
   ResizableHandle,
@@ -13,7 +13,7 @@ import ProblemDescription from "@/components/problem/ProblemDescription";
 import InputOutput from "@/components/problem/InputOutput";
 
 const ProblemDetail: React.FC = () => {
-  //   const { problem_id } = useParams<{ problem_id: string }>();
+  const { problem_id } = useParams<{ problem_id: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ProblemDetail: React.FC = () => {
         defaultSize={50}
         className="rounded-[7px] border-[2px] border-[#555555]"
       >
-        <ProblemDescription />
+        <ProblemDescription problem_id={problem_id}/>
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={50}>
@@ -45,7 +45,7 @@ const ProblemDetail: React.FC = () => {
             defaultSize={50}
             className="rounded-[7px] border-[2px] border-[#555555]"
           >
-            <InputOutput />
+            <InputOutput problem_id={problem_id}/>
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>

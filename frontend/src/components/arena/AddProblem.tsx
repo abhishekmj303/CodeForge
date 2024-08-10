@@ -89,6 +89,7 @@ const AddProblem = () => {
       if (response.status === 200) {
         // Handle successful save
         console.log("Problem added successfully", response.data);
+        window.location.reload();
       } else {
         // Handle error response (non-200 status code)
         console.error("Failed to add problem", response.data);

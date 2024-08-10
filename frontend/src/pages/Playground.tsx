@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CodeEditor from "@/components/editor/CodeEditor";
 import {
@@ -15,6 +16,7 @@ const Playground: React.FC = () => {
   const [outputValue, setOutputValue] = useState<string>("");
   const [code, setCode] = useState<string>("");
   const [language, setLanguage] = useState<string>("python");
+  const navigate = useNavigate();
 
   const mapLanguage = (language: string) => {
     switch (language) {
@@ -56,12 +58,22 @@ const Playground: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const storedUserName = sessionStorage.getItem("username");
+    if (!storedUserName) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
-      className="w-[100vw] h-[80vh] rounded-lg border"
+      className="w-[100vw] h-[80vh] rounded-lg border gap-[1.5px]"
     >
-      <ResizablePanel defaultSize={50}>
+      <ResizablePanel
+        defaultSize={50}
+        className="rounded-[7px] border-[2px] border-[#555555]"
+      >
         <div className="flex flex-col h-full">
           <div className="flex-1">
             <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode} />
@@ -70,8 +82,11 @@ const Playground: React.FC = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={50}>
-        <ResizablePanelGroup direction="vertical">
-          <ResizablePanel defaultSize={55}>
+        <ResizablePanelGroup direction="vertical" className="gap-[1.5px]">
+          <ResizablePanel
+            defaultSize={55}
+            className="rounded-[7px] border-[2px] border-[#555555]"
+          >
             <div className="flex flex-col h-full p-2 bg-black-200">
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold mr-2">Output</span>
@@ -93,7 +108,10 @@ const Playground: React.FC = () => {
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={45}>
+          <ResizablePanel
+            defaultSize={45}
+            className="rounded-[7px] border-[2px] border-[#555555]"
+          >
             <div className="flex flex-col h-full p-2 bg-black-200">
               <span className="font-semibold mb-2">Input</span>
               <textarea

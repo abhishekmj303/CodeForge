@@ -41,3 +41,24 @@ def get_contest_problems(
         response.status_code = 404
         return Error("Contest not found", "Invalid contest code.")
     return contest.problems
+
+@router.get("/{contest_code}/leaderboard")
+def get_contest_leaderboard(contest_code: str, response: Response) -> list[dict] | Error:
+    contest = Contests.get(contest_code)
+    if not contest:
+        response.status_code = 404
+        return Error("Contest not found", "Invalid contest code.")
+    
+    leaderboard = Contests.get_leaderboard(contest.id)
+    if not leaderboard:
+        response.status_code = 404
+        return Error("Leaderboard not found", "No submissions found for this contest.")
+
+    return [
+        {
+            "username": entry.username,
+            "solved_problems": entry.solved_problems,
+            "total_time": entry.total_time
+        }
+        for entry in leaderboard
+    ]

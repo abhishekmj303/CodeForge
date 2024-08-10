@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ContestCard from "@/components/ContestCard";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,12 @@ const contests = [
 
 export default function MainPage() {
   const navigate = useNavigate();
+  useEffect(() => {
+    const storedUserName = sessionStorage.getItem("username");
+    if (!storedUserName) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleAddContest = () => {
     navigate("/add-contest");
@@ -39,7 +45,10 @@ export default function MainPage() {
     <div className="flex flex-col items-center p-8">
       <div className="flex justify-between w-full max-w-3xl mb-8">
         <h1 className="text-3xl font-bold">Coding Contests</h1>
-        <Button className="bg-[#FFAD60] hover:bg-[#FFA250] flex items-center" onClick={handleAddContest}>
+        <Button
+          className="bg-[#FFAD60] hover:bg-[#FFA250] flex items-center"
+          onClick={handleAddContest}
+        >
           Add Contest
           <ArrowUp size={16} className="ml-2" />
         </Button>

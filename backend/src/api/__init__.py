@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from api.models import Users, init_db
 from api.routes import contests, problems, run
@@ -24,8 +25,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class User(BaseModel):
+    username: str
+
+
 @app.post("/user")
-def create_user(username: str) -> Users:
-    user = Users(username=username)
+def create_user(user: User) -> Users:
+    user = Users(username=user.username)
     user.create()
     return user

@@ -37,7 +37,7 @@ class Contests(SQLModel, table=True):
             contests = session.exec(select(Contests)).all()
             return contests
 
-    def get_details(code: str):
+    def get(code: str):
         with Session(engine) as session:
             contest = session.exec(
                 select(Contests).where(Contests.code == code)

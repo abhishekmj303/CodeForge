@@ -126,38 +126,49 @@ export default function AddContestPage() {
 
   const submitNewContest = async () => {
     try {
-      // Add contest details
+      // Create the contest
       const contestResponse = await axiosInstance.post("/contests", {
         title: contestDetails.title,
         details: contestDetails.details,
         owner: sessionStorage.getItem("username"),
       });
-
+  
       const contestData = contestResponse.data;
-
-      // Add problems to the contest
-      if (contestData && contestData.id) {
+  
+      if (contestData && contestData.code) {
         const contestCode = contestData.code; 
+  
         const formattedProblems = problems.map((problem) => ({
           title: problem.title,
-          problem_statement: problem.statement, 
+          problem_statement: problem.statement, // Adjust key names if needed
           difficulty: problem.difficulty,
           constraints: problem.constraints,
           owner: sessionStorage.getItem("username"),
-          testcases: problem.testcases, 
+          testcases: problem.testcases, // Ensure this matches backend expectations
         }));
-        console.log(formattedProblems);
-        const response = await axiosInstance.post(`/contests/${contestCode}/problems`, formattedProblems);
-        console.log(response);
-
-        alert("Contest and problems added successfully!");
-        navigate("/contests");
+  
+        // Send problems to backend
+        try {
+          await axiosInstance.post(`/contests/${contestCode}/problems`, formattedProblems);
+          alert("Contest and problems added successfully!");
+          navigate("/battleground");
+        } catch (problemError) {
+          if (problemError.response && problemError.response.data) {
+            alert(`Error: ${problemError.response.data.message || "Failed to add problems."}`);
+          } else {
+            alert("An unexpected error occurred. Please try again.");
+          }
+        }
       }
     } catch (error) {
-      console.error("Error adding contest or problems:", error);
-      alert("Failed to add contest or problems. Please try again.");
+      if (error.response && error.response.data) {
+        alert(`Error: ${error.response.data.message || "Failed to add contest."}`);
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center p-8">

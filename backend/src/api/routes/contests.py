@@ -75,7 +75,7 @@ def add_contest_problem(
                 "Invalid title: Only use alphanumeric characters and spaces, or try a different title.",
             )
         try:
-            new_problem.add_testcases(problems.testcases)
+            new_problem.add_testcases(problem.testcases)
         except KeyError:
             response.status_code = 400
             return Error(

@@ -1,39 +1,49 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ContestCard from "@/components/ContestCard";
 import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
+import axiosInstance from "@/axiosInstance";
 
-const contests = [
-  {
-    title: "Hackathon 2024",
-    details: "Join us for a thrilling hackathon with exciting challenges.",
-    date: "2024-08-15",
-    owner: "Tech Innovators Inc.",
-    id: "hackathon-2024",
-  },
-  {
-    title: "Code Sprint",
-    details: "A fast-paced coding sprint with algorithmic challenges.",
-    date: "2024-09-10",
-    owner: "Code Masters",
-    id: "code-sprint",
-  },
-  {
-    title: "AI Challenge",
-    details: "Compete in AI challenges and showcase your skills.",
-    date: "2024-10-05",
-    owner: "AI Enthusiasts",
-    id: "ai-challenge",
-  },
-];
+// const contests = [
+//   {
+//     title: "Hackathon 2024",
+//     details: "Join us for a thrilling hackathon with exciting challenges.",
+//     date: "2024-08-15",
+//     owner: "Tech Innovators Inc.",
+//     id: "hackathon-2024",
+//   },
+//   {
+//     title: "Code Sprint",
+//     details: "A fast-paced coding sprint with algorithmic challenges.",
+//     date: "2024-09-10",
+//     owner: "Code Masters",
+//     id: "code-sprint",
+//   },
+//   {
+//     title: "AI Challenge",
+//     details: "Compete in AI challenges and showcase your skills.",
+//     date: "2024-10-05",
+//     owner: "AI Enthusiasts",
+//     id: "ai-challenge",
+//   },
+// ];
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const [contests, setContests] = useState([]);
   useEffect(() => {
     const storedUserName = sessionStorage.getItem("username");
     if (!storedUserName) {
       navigate("/");
+    }
+    try {
+      axiosInstance.get("/contests/").then((response) => {
+        console.log(response.data);
+        setContests(response.data);
+      });
+    } catch (error) {
+      console.error("Error fetching contests", error);
     }
   }, [navigate]);
 
@@ -61,7 +71,7 @@ export default function MainPage() {
             details={contest.details}
             date={contest.date}
             owner={contest.owner}
-            route={`/battleground/${contest.id}`}
+            route={`/battleground/${contest.code}`}
           />
         ))}
       </div>

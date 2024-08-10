@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Trash2 } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { ArrowUp } from "lucide-react";
+import axiosInstance from "@/axiosInstance";
 
 export default function AddContestPage() {
   const navigate = useNavigate();
@@ -122,6 +123,11 @@ export default function AddContestPage() {
     const newTestCases = currentProblem.testCases.filter((_, i) => i !== index);
     setCurrentProblem({ ...currentProblem, testCases: newTestCases });
   };
+
+  // const submitNewContest = () => {
+  //   try {
+
+  //   }
 
   return (
     <div className="flex flex-col items-center p-8">
@@ -285,46 +291,46 @@ export default function AddContestPage() {
                   />
                 </div>
                 <div className="space-y-1">
-              <Label htmlFor="problem-difficulty" className="mb-1">
-                Difficulty Level
-              </Label>
-              <RadioGroup
-                value={currentProblem.difficulty}
-                onValueChange={handleDifficultyChange}
-                className="flex space-x-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="easy"
-                    id="option-easy"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6] checked:border-[#14b8a6]"
-                  />
-                  <Label htmlFor="option-easy" className="text-[#14b8a6]">
-                    Easy
+                  <Label htmlFor="problem-difficulty" className="mb-1">
+                    Difficulty Level
                   </Label>
+                  <RadioGroup
+                    value={currentProblem.difficulty}
+                    onValueChange={handleDifficultyChange}
+                    className="flex space-x-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="easy"
+                        id="option-easy"
+                        className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6] checked:border-[#14b8a6]"
+                      />
+                      <Label htmlFor="option-easy" className="text-[#14b8a6]">
+                        Easy
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="medium"
+                        id="option-medium"
+                        className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b] checked:border-[#f59e0b]"
+                      />
+                      <Label htmlFor="option-medium" className="text-[#f59e0b]">
+                        Medium
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="hard"
+                        id="option-hard"
+                        className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444] checked:border-[#ef4444]"
+                      />
+                      <Label htmlFor="option-hard" className="text-[#ef4444]">
+                        Hard
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="medium"
-                    id="option-medium"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b] checked:border-[#f59e0b]"
-                  />
-                  <Label htmlFor="option-medium" className="text-[#f59e0b]">
-                    Medium
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="hard"
-                    id="option-hard"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444] checked:border-[#ef4444]"
-                  />
-                  <Label htmlFor="option-hard" className="text-[#ef4444]">
-                    Hard
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
                 <div className="space-y-1 m-2">
                   <Label htmlFor="problem-constraints">Constraints</Label>
                   <Textarea
@@ -423,7 +429,10 @@ export default function AddContestPage() {
           </Card>
         </TabsContent>
       </Tabs>
-      <Button className="bg-[#FFAD60] hover:bg-[#FFA250] flex items-center m-4">
+      <Button
+        className="bg-[#FFAD60] hover:bg-[#FFA250] flex items-center m-4"
+        onClick={submitNewContest}
+      >
         Post Contest
         <ArrowUp size={16} className="ml-2" />
       </Button>

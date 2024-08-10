@@ -94,7 +94,7 @@ class TestCases(SQLModel, table=True):
             session.add(self)
             session.commit()
 
-class Attempts(SQLModel, table=True):
+class Submissions(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     problem_id: int = Field(foreign_key="problems.id")
     username: str = Field(foreign_key="users.username")

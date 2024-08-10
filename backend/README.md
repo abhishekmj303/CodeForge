@@ -70,3 +70,11 @@ title
 description
 owner
 ```
+
+## TODO
+
+- [ ] Get all problems: code, title, difficulty, owner, contest_id, is_solved
+- [ ] Get a problem: code, title, difficulty, owner, contest_id, is_solved, problem_statement, constraints, testcases
+- [ ] Submit a problem: Run and store in Submission table
+- [ ] Leaderboard: username, solved_problems_count, total_elapsed_time
+  - [ ] Websockets for real-time leaderboard

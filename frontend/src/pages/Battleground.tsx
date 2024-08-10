@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import ContestCard from "@/components/ContestCard";
 import { Button } from "@/components/ui/button";
+import { ArrowUp } from "lucide-react";
 
 const contests = [
   {
@@ -36,10 +37,13 @@ export default function MainPage() {
 
   return (
     <div className="flex flex-col items-center p-8">
-      <h1 className="text-3xl font-bold mb-8">Coding Contests</h1>
-      <Button className="mb-8" onClick={handleAddContest}>
-        Add Contest
-      </Button>
+      <div className="flex justify-between w-full max-w-3xl mb-8">
+        <h1 className="text-3xl font-bold">Coding Contests</h1>
+        <Button className="bg-[#FFAD60] hover:bg-[#FFA250] flex items-center" onClick={handleAddContest}>
+          Add Contest
+          <ArrowUp size={16} className="ml-2" />
+        </Button>
+      </div>
       <div className="flex flex-col gap-8 w-full max-w-3xl">
         {contests.map((contest, index) => (
           <ContestCard
@@ -52,7 +56,6 @@ export default function MainPage() {
           />
         ))}
       </div>
-
     </div>
   );
 }

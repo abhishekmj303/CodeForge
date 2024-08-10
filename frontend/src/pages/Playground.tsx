@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import axiosInstance from "@/axiosInstance";
 
 const Playground: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -36,7 +37,7 @@ const Playground: React.FC = () => {
       console.log(language);
       console.log(inputValue);
       const mappedLanguage = mapLanguage(language);
-      const response = await axios.post("http://127.0.0.1:8000/run", {
+      const response = await axiosInstance.post("/run", {
         source_code: code,
         input_data: inputValue,
         language: mappedLanguage,

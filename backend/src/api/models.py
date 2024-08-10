@@ -19,12 +19,13 @@ class Contests(SQLModel, table=True):
     code: str | None = Field(default=None, unique=True, nullable=False, index=True)
     title: str
     details: str
-    date: datetime.date
+    date: datetime.date | None = Field(default=None, nullable=False)
     owner: str = Field(foreign_key="users.username")
 
     def add(self):
         with Session(engine) as session:
             self.code = generate_code(self.title, Contests)
+            self.date = datetime.date.today()
             if not self.code:
                 return
             session.add(self)

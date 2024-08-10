@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.models import Users
-from api.routes import run
+from api.models import Users, init_db
+from api.routes import contests, run
 
 app = FastAPI()
 app.include_router(run.router)
+app.include_router(contests.router)
+
+init_db()
 
 origins = [
     "http://localhost",

@@ -87,10 +87,6 @@ const InputOutput: React.FC<InputOutputProps> = ({
   const [loading, setLoading] = useState(true);
   const [runOutput, setRunOutput] = useState<string>("");
 
-  useEffect(() => {
-    // Set the sample response data (this should be removed once you have actual API responses)
-    setSubResponse(sampleResponse);
-  }, []);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -172,6 +168,19 @@ const InputOutput: React.FC<InputOutputProps> = ({
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      const response = await axiosInstance.post(`/problems/${problem_id}/submit`, {
+        source_code: code,
+        language: mapLanguage(language),
+        username: sessionStorage.getItem("username"),
+      });
+      setSubResponse(response.data);
+    } catch (error) {
+      console.error("Error submitting code:", error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -187,7 +196,6 @@ const InputOutput: React.FC<InputOutputProps> = ({
             className="bg-[#423F3E] text-white px-4 py-2 rounded hover:bg-[#555555]"
             size="sm"
             onClick={handleRun}
-            onClick={handleRun}
           >
             <Play size={16} className="mr-2" />
             Run
@@ -195,6 +203,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
           <Button
             className="bg-[#423F3E] text-green-500 px-4 py-2 rounded hover:bg-[#555555]"
             size="sm"
+            onClick={handleSubmit}
           >
             <CloudUpload size={16} className="mr-2" />
             Submit
@@ -261,7 +270,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
                     onClick={() => setActiveTestCaseId(index)}
                   >
                     {subResponse ? (
-                      subResponse.results[index].test_passed ? (
+                      subResponse.results[index]?.test_passed ? (
                         <span className="w-1 h-1 mr-2 bg-green-500 rounded-full inline-block"></span>
                       ) : (
                         <span className="w-1 h-1 mr-2 bg-red-500 rounded-full inline-block"></span>
@@ -322,7 +331,9 @@ const InputOutput: React.FC<InputOutputProps> = ({
                   <textarea
                     className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
                     value={
-                      subResponse ? subResponse.results[0].stdout : runOutput
+                      activeTestCaseId === problem.examples.length - 1
+                        ? runOutput
+                        : subResponse.results[activeTestCaseId]?.stdout || "No output"
                     }
                     readOnly
                   />

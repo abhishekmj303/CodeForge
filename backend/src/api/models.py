@@ -157,7 +157,7 @@ class Submissions(SQLModel, table=True):
 
 
 def generate_code(string: str, table: SQLModel) -> str | None:
-    if not string.replace(" -", "").isalnum():
+    if not string.replace(" ", "").replace("-", "").isalnum():
         return None
     string = string.lower().replace(" ", "-")
     if len(string) > 25:
@@ -201,7 +201,9 @@ def init_db():
                 problem_statement=problem["problem_statement"],
                 constraints=problem["constraints"],
                 owner="admin",
-            ).add()
+            )
+            if not new_problem.add():
+                raise Exception(f"Invalid title: {new_problem.title}")
             new_problem.add_testcases(problem["testcases"])
         # except Exception as e:
         #     os.remove(sqlite_file_name)

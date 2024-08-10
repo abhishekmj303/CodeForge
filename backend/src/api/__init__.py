@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.models import Users, init_db
-from api.routes import contests, run
+from api.routes import contests, problems, run
 
 app = FastAPI()
 app.include_router(run.router)
 app.include_router(contests.router)
+app.include_router(problems.router)
 
 init_db()
 
@@ -24,7 +25,7 @@ app.add_middleware(
 )
 
 @app.post("/user")
-def get_user(username: str) -> Users:
+def create_user(username: str) -> Users:
     user = Users(username=username)
-    user.add()
+    user.create()
     return user

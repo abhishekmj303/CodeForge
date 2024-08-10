@@ -6,6 +6,11 @@ from api.routes import Error
 router = APIRouter(prefix="/contests")
 
 
+@router.get("/")
+def get_all_contests() -> list[Contests]:
+    return Contests.get_all()
+
+
 @router.post("/")
 def add_contest(contest: Contests, response: Response) -> Contests | Error:
     if not contest.add():
@@ -16,10 +21,6 @@ def add_contest(contest: Contests, response: Response) -> Contests | Error:
         )
     return contest
 
-
-@router.get("/")
-def get_all_contests() -> list[Contests]:
-    return Contests.get_all()
 
 
 @router.get("/{contest_code}")

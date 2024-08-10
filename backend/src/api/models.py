@@ -6,7 +6,7 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 class Users(SQLModel, table=True):
     username: str = Field(primary_key=True)
 
-    def add(self):
+    def create(self):
         with Session(engine) as session:
             if session.get(Users, self.username):
                 return
@@ -68,6 +68,18 @@ class Problems(SQLModel, table=True):
         with Session(engine) as session:
             session.add(self)
             session.commit()
+
+    def get_all():
+        with Session(engine) as session:
+            problems = session.exec(select(Problems)).all()
+            return problems
+
+    def get(code: str):
+        with Session(engine) as session:
+            problem = session.exec(
+                select(Problems).where(Problems.code == code)
+            ).first()
+            return problem
 
 
 class TestCases(SQLModel, table=True):

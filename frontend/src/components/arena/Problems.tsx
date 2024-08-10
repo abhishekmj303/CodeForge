@@ -23,7 +23,7 @@ const Problems: React.FC = () => {
   const problems = [
     {
       id: "two-sum",
-      title: "Two Sum",
+      title: "1. Two Sum",
       difficulty: "Easy",
       status: "Not solved",
     },
@@ -51,8 +51,8 @@ const Problems: React.FC = () => {
           </TableHeader>
           <TableBody>
             {problems.map((problem) => (
-              <TableRow key={problem.id} className="cursor-pointer">
-                <TableCell className="text-left">
+              <TableRow key={problem.id} className="">
+                <TableCell className="text-left cursor-pointer">
                   <Link to={`/arena/${problem.id}`}>{problem.title}</Link>
                 </TableCell>
                 <TableCell className="text-center">

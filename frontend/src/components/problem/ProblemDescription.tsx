@@ -8,8 +8,7 @@ const problem = {
   description: `Given an array of integers nums and an integer target, return indices of
 the two numbers such that they add up to target.
 
-You may assume that each input would have exactly one solution, and you may not use the same
-element twice.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
 
 You can return the answer in any order.`,
   examples: [
@@ -27,7 +26,7 @@ You can return the answer in any order.`,
     },
   ],
   constraints: [
-    "2 <= nums.length <= 104",
+    "2 <= nums.length <= 10^4",
     "-10^9 <= nums[i] <= 10^9",
     "-10^9 <= target <= 10^9",
     "Only one valid answer exists.",
@@ -36,7 +35,7 @@ You can return the answer in any order.`,
 
 const ProblemDescription: React.FC = () => {
   return (
-    <ScrollArea className="h-full w-full rounded-md border">
+    <ScrollArea className="h-full w-full">
       <div className="bg-muted/50 p-5 w-full h-full">
         <div className="flex items-center gap-2 text-xl mb-4">
           <p className="font-semibold">{problem.title}</p>
@@ -53,32 +52,27 @@ const ProblemDescription: React.FC = () => {
         <div className="mt-4 text-sm">
           {problem.examples.map((example, index) => (
             <div key={index} className="mb-4">
-              <p className="font-bold text-lg mb-2">Example {index + 1}:</p>
-              <div className="mb-2 ml-5">
-                <p className="font-semibold text-gray-300">Input:</p>
-                <pre className="text-[#646464] text-opacity-80">
-                  {example.input}
-                </pre>
+              <p className="font-bold text-md mb-1">Example {index + 1}:</p>
+              <div className="mb-2 ml-5 text-sm">
+                <p className="font-semibold">Input:</p>
+                <pre className="text-[#ffffff99]">{example.input}</pre>
               </div>
-              <div className="ml-5">
-                <p className="font-semibold text-gray-300">Output:</p>
-                <pre className="text-[#646464] text-opacity-80">
-                  {example.output}
-                </pre>
+              <div className="ml-5 text-sm">
+                <p className="font-semibold">Output:</p>
+                <pre className="text-[#ffffff99]">{example.output}</pre>
               </div>
             </div>
           ))}
         </div>
         <div className="mt-4 text-sm flex flex-col">
-          <p className="font-bold text-lg">Constraints:</p>
+          <p className="font-bold text-md">Constraints:</p>
           {problem.constraints.map((constraint, index) => (
-            <Badge
+            <p
               key={index}
-              variant="secondary"
-              className="text-[#646464] bg-[#31363F] font-light w-fit my-1 ml-2"
+              className="text-[#ffffff99] text-sm font-light w-fit my-1 ml-5"
             >
               {constraint}
-            </Badge>
+            </p>
           ))}
         </div>
       </div>

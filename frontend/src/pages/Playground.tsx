@@ -61,10 +61,7 @@ const Playground: React.FC = () => {
       <ResizablePanel defaultSize={50}>
         <div className="flex flex-col h-full">
           <div className="flex-1">
-            <CodeEditor
-              onLanguageChange={setLanguage}
-              onCodeChange={setCode}
-            />
+            <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode} />
           </div>
         </div>
       </ResizablePanel>

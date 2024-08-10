@@ -17,7 +17,10 @@ interface CodeEditorProps {
   onCodeChange: (code: string) => void;
 }
 
-const CodeEditor: FC<CodeEditorProps> = ({ onLanguageChange, onCodeChange }) => {
+const CodeEditor: FC<CodeEditorProps> = ({
+  onLanguageChange,
+  onCodeChange,
+}) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
   const [language, setLanguage] = useState<Language>("javascript");

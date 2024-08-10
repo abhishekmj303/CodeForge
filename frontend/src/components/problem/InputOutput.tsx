@@ -123,13 +123,21 @@ const InputOutput: React.FC = () => {
                 onChange={(e) => handleInputChange(example.id, e.target.value)}
                 disabled={example.id !== "custom"}
               />
-              <p className="text-sm font-medium mt-4 text-gray-500">Output:</p>
-              <textarea
-                className="w-full rounded-lg border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
-                value={example.outputText}
-                onChange={(e) => handleOutputChange(example.id, e.target.value)}
-                disabled={example.id !== "custom"}
-              />
+              {example.id !== "custom" && (
+                <>
+                  <p className="text-sm font-medium mt-4 text-gray-500">
+                    Output:
+                  </p>
+                  <textarea
+                    className="w-full rounded-lg border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                    value={example.outputText}
+                    onChange={(e) =>
+                      handleOutputChange(example.id, e.target.value)
+                    }
+                    disabled
+                  />
+                </>
+              )}
             </div>
           )
       )}

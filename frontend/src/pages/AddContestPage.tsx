@@ -274,26 +274,47 @@ export default function AddContestPage() {
                     onChange={(e) => handleInputChange(e, "statement")}
                   />
                 </div>
-                <div className="space-y-1 m-2">
-                  <Label>Difficulty Level</Label>
-                  <RadioGroup
-                    value={currentProblem.difficulty}
-                    onValueChange={handleDifficultyChange}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Easy" id="easy" />
-                      <Label htmlFor="easy">Easy</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Medium" id="medium" />
-                      <Label htmlFor="medium">Medium</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Difficult" id="difficult" />
-                      <Label htmlFor="difficult">Difficult</Label>
-                    </div>
-                  </RadioGroup>
+                <div className="space-y-1">
+              <Label htmlFor="problem-difficulty" className="mb-1">
+                Difficulty Level
+              </Label>
+              <RadioGroup
+                value={currentProblem.difficulty}
+                onValueChange={handleDifficultyChange}
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="easy"
+                    id="option-easy"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6] checked:border-[#14b8a6]"
+                  />
+                  <Label htmlFor="option-easy" className="text-[#14b8a6]">
+                    Easy
+                  </Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="medium"
+                    id="option-medium"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b] checked:border-[#f59e0b]"
+                  />
+                  <Label htmlFor="option-medium" className="text-[#f59e0b]">
+                    Medium
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="hard"
+                    id="option-hard"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444] checked:border-[#ef4444]"
+                  />
+                  <Label htmlFor="option-hard" className="text-[#ef4444]">
+                    Hard
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
                 <div className="space-y-1 m-2">
                   <Label htmlFor="problem-constraints">Constraints</Label>
                   <Textarea

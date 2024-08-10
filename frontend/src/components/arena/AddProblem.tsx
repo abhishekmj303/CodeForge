@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import axiosInstance from "@/axiosInstance";
 
 const AddProblem = () => {
   const [currentProblem, setCurrentProblem] = useState({
@@ -70,16 +71,39 @@ const AddProblem = () => {
     if (editTestCaseIndex === index) setEditTestCaseIndex(null);
   };
 
-  const saveProblem = () => {
-    // Reset the state to default values
-    setCurrentProblem({
-      title: "",
-      statement: "",
-      difficulty: "easy",
-      constraints: "",
-      testCases: [{ input: "", output: "" }],
-    });
+  const saveProblem = async () => {
+    try {
+      const username = sessionStorage.getItem("username");
+      const response = await axiosInstance.post("/problems", {
+        title: currentProblem.title,
+        difficulty: currentProblem.difficulty,
+        problem_statement: currentProblem.statement,
+        constraints: currentProblem.constraints,
+        testcases: currentProblem.testCases.map((testCase) => ({
+          input: testCase.input,
+          output: testCase.output,
+        })),
+        owner: username, // Replace with actual owner identifier
+      });
+  
+      if (response.status === 200) {
+        // Handle successful save
+        console.log("Problem added successfully", response.data);
+      } else {
+        // Handle error response (non-200 status code)
+        console.error("Failed to add problem", response.data);
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        // Handle specific errors from the backend
+        console.error("Error adding problem:", error.response.data);
+      } else {
+        // Handle general errors
+        console.error("Unexpected error:", error);
+      }
+    }
   };
+  
 
   return (
     <Dialog>

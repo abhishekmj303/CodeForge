@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -6,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Card,
   CardContent,
@@ -16,22 +16,37 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import axiosInstance from "@/axiosInstance";
 
 import AddProblem from "./AddProblem";
 
-interface Problems {
+interface Problem {
+  code: string;
+  title: string;
+  difficulty: string;
+  is_solved: boolean;
+}
+
+interface ProblemsProps {
   type: string;
 }
 
-const Problems: React.FC<Problems> = ({ type }) => {
-  const problems = [
-    {
-      id: "two-sum",
-      title: "1. Two Sum",
-      difficulty: "Easy",
-      status: "Not solved",
-    },
-  ];
+const Problems: React.FC<ProblemsProps> = ({ type }) => {
+  const [problems, setProblems] = useState<Problem[]>([]);
+
+  useEffect(() => {
+    const fetchProblems = async () => {
+      try {
+        const username = sessionStorage.getItem("username");
+        const response = await axiosInstance.get(`/problems?username=${username}`);
+        setProblems(response.data);
+      } catch (error) {
+        console.error("Failed to fetch problems:", error);
+      }
+    };
+
+    fetchProblems();
+  }, []);
 
   return (
     <Card className="w-[40rem] m-5">
@@ -55,9 +70,9 @@ const Problems: React.FC<Problems> = ({ type }) => {
           </TableHeader>
           <TableBody>
             {problems.map((problem) => (
-              <TableRow key={problem.id} className="">
+              <TableRow key={problem.code} className="">
                 <TableCell className="text-left cursor-pointer">
-                  <Link to={`/arena/${problem.id}`}>{problem.title}</Link>
+                  <Link to={`/arena/${problem.code}`}>{problem.title}</Link>
                 </TableCell>
                 <TableCell className="text-center">
                   {problem.difficulty.toLowerCase() === "easy" ? (
@@ -83,7 +98,9 @@ const Problems: React.FC<Problems> = ({ type }) => {
                     </Badge>
                   )}
                 </TableCell>
-                <TableCell className="text-right">{problem.status}</TableCell>
+                <TableCell className="text-right">
+                  {problem.is_solved ? "Solved" : "Not solved"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -44,41 +44,47 @@ def get_contest(contest_code: str, response: Response) -> Contests | Error:
 
 
 @router.post("/{contest_code}/problems")
-def add_contest_problem(contest_code: str, problem: ProblemDetails, response: Response):
+def add_contest_problem(
+    contest_code: str, problems: list[ProblemDetails], response: Response
+):
     contest = Contests.get(contest_code)
     if not contest:
         response.status_code = 404
         return Error("Contest not found", "Invalid contest code.")
-    if contest.owner != problem.owner:
-        response.status_code = 403
-        return Error(
-            "Forbidden", "You do not have permission to add problems to this contest."
-        )
 
-    new_problem = Problems(
-        title=problem.title,
-        difficulty=problem.difficulty,
-        problem_statement=problem.problem_statement,
-        constraints=problem.constraints,
-        owner=problem.owner,
-        contest_id=contest.id,
-    )
-    if not new_problem.add():
-        response.status_code = 400
-        return Error(
-            "Cannot add problem",
-            "Invalid title: Only use alphanumeric characters and spaces, or try a different title.",
+    all_new_problems = []
+    for problem in problems:
+        if contest.owner != problem.owner:
+            response.status_code = 403
+            return Error(
+                "Forbidden",
+                "You do not have permission to add problems to this contest.",
+            )
+        new_problem = Problems(
+            title=problem.title,
+            difficulty=problem.difficulty,
+            problem_statement=problem.problem_statement,
+            constraints=problem.constraints,
+            owner=problem.owner,
+            contest_id=contest.id,
         )
-    try:
-        new_problem.add_testcases(problem.testcases)
-    except KeyError:
-        response.status_code = 400
-        return Error(
-            "Cannot add testcases to problem",
-            "Invalid testcases: Each testcase must have 'input' and 'output' keys.",
-        )
+        if not new_problem.add():
+            response.status_code = 400
+            return Error(
+                "Cannot add problem",
+                "Invalid title: Only use alphanumeric characters and spaces, or try a different title.",
+            )
+        try:
+            new_problem.add_testcases(problems.testcases)
+        except KeyError:
+            response.status_code = 400
+            return Error(
+                "Cannot add testcases to problem",
+                "Invalid testcases: Each testcase must have 'input' and 'output' keys.",
+            )
+        all_new_problems.append(new_problem)
 
-    return new_problem
+    return all_new_problems
 
 
 @router.get("/{contest_code}/problems")

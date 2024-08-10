@@ -121,7 +121,7 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             result.stderr = stderr
             result.return_code = return_code
             result.elapsed_time = round(elapsed_time, 3)
-            result.memory_usage = round(memory_usage / 1024, 3)  # in MB
+            result.memory_usage = round(memory_usage / 1024 - 54, 3)  # in MB
         except subprocess.TimeoutExpired:
             process.kill()
             result.timeout = True

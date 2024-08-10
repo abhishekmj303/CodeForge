@@ -13,8 +13,14 @@ import ProblemDescription from "@/components/problem/ProblemDescription";
 import InputOutput from "@/components/problem/InputOutput";
 
 const ProblemDetail: React.FC = () => {
-  const { problem_id } = useParams<{ problem_id: string }>();
   const navigate = useNavigate();
+  const { problem_id, contest_code } = useParams<{
+    problem_id: string;
+    contest_code: string;
+  }>();
+
+  console.log("problem_id:", problem_id);
+  console.log("contest_code:", contest_code);
 
   useEffect(() => {
     const storedUserName = sessionStorage.getItem("username");
@@ -29,7 +35,7 @@ const ProblemDetail: React.FC = () => {
         defaultSize={50}
         className="rounded-[7px] border-[2px] border-[#555555]"
       >
-        <ProblemDescription problem_id={problem_id}/>
+        <ProblemDescription problem_id={problem_id} />
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel defaultSize={50}>
@@ -45,7 +51,7 @@ const ProblemDetail: React.FC = () => {
             defaultSize={50}
             className="rounded-[7px] border-[2px] border-[#555555]"
           >
-            <InputOutput problem_id={problem_id}/>
+            <InputOutput problem_id={problem_id} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>

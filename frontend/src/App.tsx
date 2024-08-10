@@ -22,7 +22,11 @@ function App() {
             <Route path="/arena" element={<Arena />} />
             <Route path="/arena/:problem_id" element={<ProblemDetail />} />
             <Route path="/battleground" element={<Battleground />} />
-            <Route path="/battleground/:contest_id" element={<Contest />} />
+            <Route path="/battleground/:contest_code" element={<Contest />} />
+            <Route
+              path="/battleground/:contest_code/:problem_id"
+              element={<ProblemDetail />}
+            />
             <Route path="/add-contest" element={<AddContestPage />} />
           </Routes>
         </main>

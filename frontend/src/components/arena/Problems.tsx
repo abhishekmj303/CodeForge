@@ -29,17 +29,27 @@ interface Problem {
 
 interface ProblemsProps {
   type: string;
+  contest_code?: string;
 }
 
-const Problems: React.FC<ProblemsProps> = ({ type }) => {
+const Problems: React.FC<ProblemsProps> = ({ type, contest_code }) => {
   const [problems, setProblems] = useState<Problem[]>([]);
 
   useEffect(() => {
     const fetchProblems = async () => {
       try {
-        const username = sessionStorage.getItem("username");
-        const response = await axiosInstance.get(`/problems?username=${username}`);
-        setProblems(response.data);
+        if (type.toLowerCase() === "arena") {
+          const username = sessionStorage.getItem("username");
+          const response = await axiosInstance.get(
+            `/problems?username=${username}`
+          );
+          setProblems(response.data);
+        } else if (type.toLowerCase() === "contest") {
+          const response = await axiosInstance.get(
+            `/contests/${contest_code}/problems`
+          );
+          setProblems(response.data);
+        }
       } catch (error) {
         console.error("Failed to fetch problems:", error);
       }
@@ -72,7 +82,13 @@ const Problems: React.FC<ProblemsProps> = ({ type }) => {
             {problems.map((problem) => (
               <TableRow key={problem.code} className="">
                 <TableCell className="text-left cursor-pointer">
-                  <Link to={`/arena/${problem.code}`}>{problem.title}</Link>
+                  {type.toLowerCase() === "arena" ? (
+                    <Link to={`/arena/${problem.code}`}>{problem.title}</Link>
+                  ) : (
+                    <Link to={`/battleground/${contest_code}/${problem.code}`}>
+                      {problem.title}
+                    </Link>
+                  )}
                 </TableCell>
                 <TableCell className="text-center">
                   {problem.difficulty.toLowerCase() === "easy" ? (

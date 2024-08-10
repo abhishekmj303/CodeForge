@@ -7,7 +7,9 @@ interface ProblemDescriptionProps {
   problem_id: string;
 }
 
-const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem_id }) => {
+const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
+  problem_id,
+}) => {
   const [problem, setProblem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +18,7 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem_id }) =
       try {
         const response = await axiosInstance.get(`/problems/${problem_id}`);
         setProblem(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching problem:", error);
       } finally {
@@ -35,8 +38,8 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem_id }) =
   }
 
   return (
-    <ScrollArea className="h-full w-full">
-      <div className="bg-muted/50 p-5 w-full h-full">
+    <ScrollArea className="">
+      <div className="bg-muted/50 p-5 w-full h-screen">
         <div className="flex items-center gap-2 text-xl mb-4">
           <p className="font-semibold">{problem.title}</p>
           {problem.difficulty === "easy" ? (
@@ -82,12 +85,10 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem_id }) =
         </div>
         <div className="mt-4 text-sm flex flex-col">
           <p className="font-bold text-md">Constraints:</p>
-          
-            <pre
-              className="text-[#ffffff99] text-sm font-light w-fit my-1 ml-5"
-            >
-              {problem.constraint}
-            </pre>
+
+          <pre className="text-[#ffffff99] text-sm font-light w-fit my-1 ml-5">
+            {problem.constraint}
+          </pre>
         </div>
       </div>
     </ScrollArea>

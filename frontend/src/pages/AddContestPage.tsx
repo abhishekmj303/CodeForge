@@ -11,17 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Trash2 } from 'lucide-react';
-import { Pencil } from 'lucide-react';
+import { Trash2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { ArrowUp } from "lucide-react";
-
 
 export default function AddContestPage() {
   const [contestDetails, setContestDetails] = useState({
@@ -38,7 +32,9 @@ export default function AddContestPage() {
     testCases: [{ input: "", output: "" }],
   });
   const [isEditingDetails, setIsEditingDetails] = useState(true);
-  const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(null);
+  const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(
+    null
+  );
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -173,8 +169,12 @@ export default function AddContestPage() {
               ) : (
                 <>
                   <div className="space-y-1">
-                    <p><strong>Title:</strong> {contestDetails.title}</p>
-                    <p><strong>Details:</strong> {contestDetails.details}</p>
+                    <p>
+                      <strong>Title:</strong> {contestDetails.title}
+                    </p>
+                    <p>
+                      <strong>Details:</strong> {contestDetails.details}
+                    </p>
                   </div>
                   <CardFooter>
                     <Button onClick={editContestDetails} className="w-full">
@@ -206,7 +206,7 @@ export default function AddContestPage() {
                         onClick={() => handleEditProblem(index)}
                       >
                         Edit
-                        <Pencil size={16} className="ml-2"/>
+                        <Pencil size={16} className="ml-2" />
                       </Button>
                       <Button
                         size="sm"
@@ -215,21 +215,36 @@ export default function AddContestPage() {
                         onClick={() => handleDeleteProblem(index)}
                       >
                         Delete
-                        <Trash2 size={16} className="ml-2"/>
+                        <Trash2 size={16} className="ml-2" />
                       </Button>
                     </div>
                   </h2>
                   <div className="space-y-1">
-                    <p><strong>Title:</strong> {problem.title}</p>
-                    <p><strong>Statement:</strong> {problem.statement}</p>
-                    <p><strong>Difficulty Level:</strong> {problem.difficulty}</p>
-                    <p><strong>Constraints:</strong> {problem.constraints}</p>
+                    <p>
+                      <strong>Title:</strong> {problem.title}
+                    </p>
+                    <p>
+                      <strong>Statement:</strong> {problem.statement}
+                    </p>
+                    <p>
+                      <strong>Difficulty Level:</strong> {problem.difficulty}
+                    </p>
+                    <p>
+                      <strong>Constraints:</strong> {problem.constraints}
+                    </p>
                     <h3 className="font-semibold mt-2">Test Cases</h3>
                     {problem.testCases.map((testCase, testCaseIndex) => (
-                      <div key={testCaseIndex} className="p-2 border rounded-lg mt-2">
+                      <div
+                        key={testCaseIndex}
+                        className="p-2 border rounded-lg mt-2"
+                      >
                         <div className="space-y-1">
-                          <p><strong>Input:</strong> {testCase.input}</p>
-                          <p><strong>Output:</strong> {testCase.output}</p>
+                          <p>
+                            <strong>Input:</strong> {testCase.input}
+                          </p>
+                          <p>
+                            <strong>Output:</strong> {testCase.output}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -261,23 +276,23 @@ export default function AddContestPage() {
                 </div>
                 <div className="space-y-1 m-2">
                   <Label>Difficulty Level</Label>
-                <RadioGroup
+                  <RadioGroup
                     value={currentProblem.difficulty}
                     onValueChange={handleDifficultyChange}
-                >
-                    <div className="flex items-center space-x-2 mt-1">
-                    <RadioGroupItem value="Easy" id="easy" />
-                    <Label htmlFor="easy">Easy</Label>
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Easy" id="easy" />
+                      <Label htmlFor="easy">Easy</Label>
                     </div>
-                    <div className="flex items-center space-x-2 mt-1">
-                    <RadioGroupItem value="Medium" id="medium" />
-                    <Label htmlFor="medium">Medium</Label>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Medium" id="medium" />
+                      <Label htmlFor="medium">Medium</Label>
                     </div>
-                    <div className="flex items-center space-x-2 mt-1">
-                    <RadioGroupItem value="Difficult" id="difficult" />
-                    <Label htmlFor="difficult">Difficult</Label>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Difficult" id="difficult" />
+                      <Label htmlFor="difficult">Difficult</Label>
                     </div>
-                </RadioGroup>
+                  </RadioGroup>
                 </div>
                 <div className="space-y-1 m-2">
                   <Label htmlFor="problem-constraints">Constraints</Label>
@@ -295,15 +310,17 @@ export default function AddContestPage() {
                       <div className="space-y-1">
                         {editTestCaseIndex === index ? (
                           <>
-                            <Label htmlFor={`test-input-${index}`}>
-                              Input
-                            </Label>
+                            <Label htmlFor={`test-input-${index}`}>Input</Label>
                             <Input
                               id={`test-input-${index}`}
                               placeholder="Test Case Input"
                               value={testCase.input}
                               onChange={(e) =>
-                                handleTestCaseChange(index, "input", e.target.value)
+                                handleTestCaseChange(
+                                  index,
+                                  "input",
+                                  e.target.value
+                                )
                               }
                             />
                             <Label htmlFor={`test-output-${index}`}>
@@ -314,7 +331,11 @@ export default function AddContestPage() {
                               placeholder="Test Case Output"
                               value={testCase.output}
                               onChange={(e) =>
-                                handleTestCaseChange(index, "output", e.target.value)
+                                handleTestCaseChange(
+                                  index,
+                                  "output",
+                                  e.target.value
+                                )
                               }
                             />
                             <Button
@@ -327,8 +348,12 @@ export default function AddContestPage() {
                           </>
                         ) : (
                           <>
-                            <p><strong>Input:</strong> {testCase.input}</p>
-                            <p><strong>Output:</strong> {testCase.output}</p>
+                            <p>
+                              <strong>Input:</strong> {testCase.input}
+                            </p>
+                            <p>
+                              <strong>Output:</strong> {testCase.output}
+                            </p>
                             <div className="flex space-x-2 mt-1">
                               <Button
                                 size="sm"
@@ -336,7 +361,7 @@ export default function AddContestPage() {
                                 onClick={() => handleEditTestCase(index)}
                               >
                                 Edit
-                                <Pencil size={16} className="ml-2"/>
+                                <Pencil size={16} className="ml-2" />
                               </Button>
                               <Button
                                 size="sm"
@@ -345,7 +370,7 @@ export default function AddContestPage() {
                                 onClick={() => handleDeleteTestCase(index)}
                               >
                                 Delete
-                                <Trash2 size={16} className="ml-2"/>
+                                <Trash2 size={16} className="ml-2" />
                               </Button>
                             </div>
                           </>
@@ -374,4 +399,3 @@ export default function AddContestPage() {
     </div>
   );
 }
-

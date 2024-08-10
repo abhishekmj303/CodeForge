@@ -8,21 +8,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Pencil, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const AddProblem = () => {
   const [currentProblem, setCurrentProblem] = useState({
     title: "",
     statement: "",
-    difficulty: "",
+    difficulty: "easy",
     constraints: "",
     testCases: [{ input: "", output: "" }],
   });
+
+  const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(
+    null
+  );
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -49,11 +54,28 @@ const AddProblem = () => {
     }));
   };
 
+  const handleEditTestCase = (index: number) => {
+    setEditTestCaseIndex(index);
+  };
+
+  const saveTestCase = () => {
+    setEditTestCaseIndex(null);
+  };
+
+  const handleDeleteTestCase = (index: number) => {
+    setCurrentProblem((prev) => ({
+      ...prev,
+      testCases: prev.testCases.filter((_, i) => i !== index),
+    }));
+    if (editTestCaseIndex === index) setEditTestCaseIndex(null);
+  };
+
   const saveProblem = () => {
+    // Reset the problem form to default values
     setCurrentProblem({
       title: "",
       statement: "",
-      difficulty: "",
+      difficulty: "easy",
       constraints: "",
       testCases: [{ input: "", output: "" }],
     });
@@ -75,99 +97,160 @@ const AddProblem = () => {
               Add a new problem to the list of available problems.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-1">
+          <div className="space-y-6">
+            <div className="space-y-2">
               <Label htmlFor="problem-title" className="mb-1">
                 Title
               </Label>
               <Input
                 id="problem-title"
-                className="w-11/12 ml-1"
+                className="w-full"
                 placeholder="Problem Title"
                 value={currentProblem.title}
                 onChange={(e) => handleInputChange(e, "title")}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="problem-statement" className="mb-1">
                 Problem Statement
               </Label>
               <Textarea
                 id="problem-statement"
-                className="w-11/12 ml-1"
+                className="w-full"
                 placeholder="Problem Statement"
                 value={currentProblem.statement}
                 onChange={(e) => handleInputChange(e, "statement")}
               />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="problem-difficulty" className="mb-1">
                 Difficulty Level
               </Label>
-              <Input
-                id="problem-difficulty"
-                className="w-11/12 ml-1"
-                placeholder="Difficulty Level"
-                value={currentProblem.difficulty}
-                onChange={(e) => handleInputChange(e, "difficulty")}
-              />
+              <RadioGroup
+                defaultValue={currentProblem.difficulty}
+                onValueChange={(value) =>
+                  setCurrentProblem((prev) => ({ ...prev, difficulty: value }))
+                }
+                className="flex space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="easy"
+                    id="option-easy"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6]"
+                  />
+                  <Label htmlFor="option-easy" className="text-[#14b8a6]">
+                    Easy
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="medium"
+                    id="option-medium"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b]"
+                  />
+                  <Label htmlFor="option-medium" className="text-[#f59e0b]">
+                    Medium
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem
+                    value="hard"
+                    id="option-hard"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444]"
+                  />
+                  <Label htmlFor="option-hard" className="text-[#ef4444]">
+                    Hard
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="problem-constraints" className="mb-1">
                 Constraints
               </Label>
               <Textarea
                 id="problem-constraints"
-                className="w-11/12 ml-1"
+                className="w-full"
                 placeholder="Constraints"
                 value={currentProblem.constraints}
                 onChange={(e) => handleInputChange(e, "constraints")}
               />
             </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Test Cases</h3>
+            <div className="space-y-6 mt-4">
+              <h3 className="font-semibold text-lg">Test Cases</h3>
               {currentProblem.testCases.map((testCase, index) => (
-                <div
-                  key={index}
-                  className="p-2 border border-gray-800 rounded-lg w-11/12 ml-1"
-                >
-                  <div className="space-y-1">
-                    <Label
-                      htmlFor={`test-case-input-${index}`}
-                      className="mb-1"
-                    >
-                      Input
-                    </Label>
-                    <Textarea
-                      id={`test-case-input-${index}`}
-                      className="w-11/12 ml-1"
-                      placeholder="Input"
-                      value={testCase.input}
-                      onChange={(e) =>
-                        handleTestCaseChange(index, "input", e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="space-y-1 mt-2">
-                    <Label
-                      htmlFor={`test-case-output-${index}`}
-                      className="mb-1"
-                    >
-                      Output
-                    </Label>
-                    <Textarea
-                      id={`test-case-output-${index}`}
-                      className="w-11/12 ml-1"
-                      placeholder="Output"
-                      value={testCase.output}
-                      onChange={(e) =>
-                        handleTestCaseChange(index, "output", e.target.value)
-                      }
-                    />
+                <div key={index} className="p-4 border rounded-lg">
+                  <div className="space-y-2">
+                    {editTestCaseIndex === index ? (
+                      <>
+                        <Label htmlFor={`test-input-${index}`}>Input</Label>
+                        <Input
+                          id={`test-input-${index}`}
+                          placeholder="Test Case Input"
+                          value={testCase.input}
+                          onChange={(e) =>
+                            handleTestCaseChange(index, "input", e.target.value)
+                          }
+                        />
+                        <Label htmlFor={`test-output-${index}`}>Output</Label>
+                        <Input
+                          id={`test-output-${index}`}
+                          placeholder="Test Case Output"
+                          value={testCase.output}
+                          onChange={(e) =>
+                            handleTestCaseChange(
+                              index,
+                              "output",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <Button
+                          size="sm"
+                          className="mt-2 w-full bg-[#14b8a6] text-white hover:bg-[#059669]"
+                          onClick={saveTestCase}
+                        >
+                          Save Test Case
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <p>
+                          <strong>Input:</strong> {testCase.input}
+                        </p>
+                        <p>
+                          <strong>Output:</strong> {testCase.output}
+                        </p>
+                        <div className="flex space-x-2 mt-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditTestCase(index)}
+                          >
+                            Edit
+                            <Pencil size={16} className="ml-2" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            color="red"
+                            onClick={() => handleDeleteTestCase(index)}
+                          >
+                            Delete
+                            <Trash2 size={16} className="ml-2" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
-              <Button onClick={addTestCase} className="mt-2">
+              <Button
+                size="sm"
+                className="mt-2 w-full bg-[#FFAD60] text-white hover:bg-[#FFA250]"
+                onClick={addTestCase}
+              >
                 Add Test Case
               </Button>
             </div>

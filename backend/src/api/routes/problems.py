@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Response
 from pydantic import BaseModel
 
-from api.models import Problems
+from api.models import Problems, TestCases
 from api.routes import Error
 
 router = APIRouter(prefix="/problems")
 
 
-class ProblemPost(BaseModel):
+class ProblemDetails(BaseModel):
     title: str
     difficulty: str
     problem_statement: str
@@ -16,7 +16,7 @@ class ProblemPost(BaseModel):
     owner: str
 
 
-class ProblemInfo(BaseModel):
+class ProblemList(BaseModel):
     code: str
     title: str
     difficulty: str
@@ -24,7 +24,7 @@ class ProblemInfo(BaseModel):
 
 
 @router.post("/")
-def add_problem(problem: ProblemPost, response: Response) -> Problems | Error:
+def add_problem(problem: ProblemDetails, response: Response) -> Problems | Error:
     new_problem = Problems(
         title=problem.title,
         difficulty=problem.difficulty,
@@ -51,12 +51,12 @@ def add_problem(problem: ProblemPost, response: Response) -> Problems | Error:
 
 
 @router.get("/")
-def get_all_problems(username: str) -> list[ProblemInfo]:
+def get_all_problems(username: str) -> list[ProblemList]:
     problems = Problems.get_all(username)
     problems_info = []
     for problem in problems:
         problems_info.append(
-            ProblemInfo(
+            ProblemList(
                 code=problem.code,
                 title=problem.title,
                 difficulty=problem.difficulty,
@@ -67,9 +67,17 @@ def get_all_problems(username: str) -> list[ProblemInfo]:
 
 
 @router.get("/{problem_code}")
-def get_problem(problem_code: str, response: Response) -> Problems | Error:
+def get_problem(problem_code: str, response: Response) -> ProblemDetails | Error:
     problem = Problems.get(problem_code)
     if not problem:
         response.status_code = 404
         return Error("Problem not found", "Invalid problem code.")
-    return problem
+    testcases = TestCases.get(problem.id)
+    return ProblemDetails(
+        title=problem.title,
+        difficulty=problem.difficulty,
+        problem_statement=problem.problem_statement,
+        constraints=problem.constraints,
+        testcases=[{"input": t.input, "output": t.output} for t in testcases],
+        owner=problem.owner,
+    )

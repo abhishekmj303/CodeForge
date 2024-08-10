@@ -42,6 +42,7 @@ def get_contest_problems(
         return Error("Contest not found", "Invalid contest code.")
     return contest.problems
 
+
 @router.get("/{contest_code}/leaderboard")
 def get_contest_leaderboard(contest_code: str, response: Response) -> list[dict] | Error:
     contest = Contests.get(contest_code)

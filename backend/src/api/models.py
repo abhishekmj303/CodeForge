@@ -1,6 +1,6 @@
 import datetime
 
-from sqlmodel import Field, Session, SQLModel, create_engine, select, func
+from sqlmodel import Field, Session, SQLModel, create_engine, func, select
 
 
 class Users(SQLModel, table=True):
@@ -12,6 +12,7 @@ class Users(SQLModel, table=True):
                 return
             session.add(self)
             session.commit()
+            session.refresh(self)
 
 
 class Contests(SQLModel, table=True):
@@ -25,11 +26,12 @@ class Contests(SQLModel, table=True):
     def add(self):
         with Session(engine) as session:
             self.code = generate_code(self.title, Contests)
-            self.date = datetime.date.today()
             if not self.code:
                 return
+            self.date = datetime.date.today()
             session.add(self)
             session.commit()
+            session.refresh(self)
             return self
 
     def get_all():
@@ -85,15 +87,20 @@ class Problems(SQLModel, table=True):
 
     def add(self):
         with Session(engine) as session:
+            self.code = generate_code(self.title, Problems)
+            if not self.code:
+                return
             session.add(self)
             session.commit()
+            session.refresh(self)
+            return self
 
     def get_all(username: str):
         with Session(engine) as session:
             problems = session.exec(
                 select(Problems, Submissions.is_solved)
                 .join(Submissions, isouter=True)
-                .where(Problems.contest_id is None)
+                .where(Problems.contest_id.is_(None))
             ).all()
             return problems
 
@@ -103,6 +110,14 @@ class Problems(SQLModel, table=True):
                 select(Problems).where(Problems.code == code)
             ).first()
             return problem
+
+    def add_testcases(self, testcases: list[dict[str, str]]):
+        for testcase in testcases:
+            TestCases(
+                input=testcase["input"],
+                output=testcase["output"],
+                problem_id=self.id,
+            ).add()
 
 
 class TestCases(SQLModel, table=True):
@@ -115,6 +130,16 @@ class TestCases(SQLModel, table=True):
         with Session(engine) as session:
             session.add(self)
             session.commit()
+            session.refresh(self)
+
+    def get(problem_id: int):
+        with Session(engine) as session:
+            testcases = session.exec(
+                select(TestCases.input, TestCases.output).where(
+                    TestCases.problem_id == problem_id
+                )
+            ).all()
+            return testcases
 
 
 class Submissions(SQLModel, table=True):
@@ -136,8 +161,7 @@ def generate_code(string: str, table: SQLModel) -> str | None:
 
     statement = select(table.code)
     with Session(engine) as session:
-        rows = session.exec(statement).all()
-        codes = [row[0] for row in rows]
+        codes = session.exec(statement).all()
 
     if string not in codes:
         return string

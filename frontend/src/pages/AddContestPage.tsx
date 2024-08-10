@@ -40,7 +40,7 @@ export default function AddContestPage() {
     statement: "",
     difficulty: "Easy",
     constraints: "",
-    testCases: [{ input: "", output: "" }],
+    testcases: [{ input: "", output: "" }],
   });
   const [isEditingDetails, setIsEditingDetails] = useState(true);
   const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(
@@ -63,9 +63,9 @@ export default function AddContestPage() {
     field: string,
     value: string
   ) => {
-    const newTestCases = [...currentProblem.testCases];
-    newTestCases[index][field] = value;
-    setCurrentProblem({ ...currentProblem, testCases: newTestCases });
+    const newTestcases = [...currentProblem.testcases];
+    newTestcases[index][field] = value;
+    setCurrentProblem({ ...currentProblem, testcases: newTestcases });
   };
 
   const saveProblem = () => {
@@ -82,14 +82,14 @@ export default function AddContestPage() {
       statement: "",
       difficulty: "Easy",
       constraints: "",
-      testCases: [{ input: "", output: "" }],
+      testcases: [{ input: "", output: "" }],
     });
   };
 
   const addTestCase = () => {
     setCurrentProblem({
       ...currentProblem,
-      testCases: [...currentProblem.testCases, { input: "", output: "" }],
+      testcases: [...currentProblem.testcases, { input: "", output: "" }],
     });
   };
 
@@ -120,14 +120,44 @@ export default function AddContestPage() {
   };
 
   const handleDeleteTestCase = (index: number) => {
-    const newTestCases = currentProblem.testCases.filter((_, i) => i !== index);
-    setCurrentProblem({ ...currentProblem, testCases: newTestCases });
+    const newTestcases = currentProblem.testcases.filter((_, i) => i !== index);
+    setCurrentProblem({ ...currentProblem, testcases: newTestcases });
   };
 
-  // const submitNewContest = () => {
-  //   try {
+  const submitNewContest = async () => {
+    try {
+      // Add contest details
+      const contestResponse = await axiosInstance.post("/contests", {
+        title: contestDetails.title,
+        details: contestDetails.details,
+        owner: sessionStorage.getItem("username"),
+      });
 
-  //   }
+      const contestData = contestResponse.data;
+
+      // Add problems to the contest
+      if (contestData && contestData.id) {
+        const contestCode = contestData.code; 
+        const formattedProblems = problems.map((problem) => ({
+          title: problem.title,
+          problem_statement: problem.statement, 
+          difficulty: problem.difficulty,
+          constraints: problem.constraints,
+          owner: sessionStorage.getItem("username"),
+          testcases: problem.testcases, 
+        }));
+        console.log(formattedProblems);
+        const response = await axiosInstance.post(`/contests/${contestCode}/problems`, formattedProblems);
+        console.log(response);
+
+        alert("Contest and problems added successfully!");
+        navigate("/contests");
+      }
+    } catch (error) {
+      console.error("Error adding contest or problems:", error);
+      alert("Failed to add contest or problems. Please try again.");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center p-8">
@@ -249,7 +279,7 @@ export default function AddContestPage() {
                       <strong>Constraints:</strong> {problem.constraints}
                     </p>
                     <h3 className="font-semibold mt-2">Test Cases</h3>
-                    {problem.testCases.map((testCase, testCaseIndex) => (
+                    {problem.testcases.map((testCase, testCaseIndex) => (
                       <div
                         key={testCaseIndex}
                         className="p-2 border rounded-lg mt-2"
@@ -342,7 +372,7 @@ export default function AddContestPage() {
                 </div>
                 <div className="space-y-4 mt-2">
                   <h3 className="font-semibold">Test Cases</h3>
-                  {currentProblem.testCases.map((testCase, index) => (
+                  {currentProblem.testcases.map((testCase, index) => (
                     <div key={index} className="p-4 border rounded-lg">
                       <div className="space-y-1">
                         {editTestCaseIndex === index ? (

@@ -85,10 +85,12 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({
         </div>
         <div className="mt-4 text-sm flex flex-col">
           <p className="font-bold text-md">Constraints:</p>
-
-          <pre className="text-[#ffffff99] text-sm font-light w-fit my-1 ml-5">
-            {problem.constraint}
-          </pre>
+          
+            <pre
+              className="text-[#ffffff99] text-sm font-light w-fit my-1 ml-5"
+            >
+              {problem.constraints}
+            </pre>
         </div>
       </div>
     </ScrollArea>

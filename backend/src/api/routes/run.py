@@ -21,13 +21,13 @@ class Language(Enum):
 COMPILED = {Language.C, Language.CPP}
 
 
-class RequestData(BaseModel):
+class RunRequest(BaseModel):
     source_code: str
     input_data: str
     language: Language
 
 
-class ResponseData(BaseModel):
+class RunResponse(BaseModel):
     stdout: str = ""
     stderr: str = ""
     return_code: int | None = None
@@ -38,7 +38,7 @@ class ResponseData(BaseModel):
 
 
 @router.post("/")
-def run(request_data: RequestData):
+def run(request_data: RunRequest) -> RunResponse:
     source_code = request_data.source_code
     input_data = request_data.input_data
     language = request_data.language
@@ -59,12 +59,12 @@ def run(request_data: RequestData):
         elif language == Language.JAVASCRIPT:
             command = ["node", f.name]
         else:
-            return ResponseData(message="Invalid language")
+            return RunResponse(message="Invalid language")
 
         if language in COMPILED:
             result = run_command(command, input_data, timeout=5, memory_limit=100)
             if result.message:
-                return ResponseData(message=result.message)
+                return RunResponse(message=result.message)
 
             if result.timeout:
                 result.message = "Time limit exceeded"
@@ -77,7 +77,7 @@ def run(request_data: RequestData):
 
         result = run_command(command, input_data, timeout=5, memory_limit=100)
         if result.message:
-            return ResponseData(message=result.message)
+            return RunResponse(message=result.message)
 
     if result.timeout:
         result.message = "Time limit exceeded"
@@ -119,7 +119,7 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             result.stderr = stderr
             result.return_code = return_code
             result.elapsed_time = round(elapsed_time, 3)
-            result.memory_usage = round(memory_usage / 1024**2, 3)  # in MB
+            result.memory_usage = round(memory_usage / 1024, 3)  # in MB
         except subprocess.TimeoutExpired:
             process.kill()
             result.timeout = True
@@ -127,7 +127,7 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             result.message = str(e)
 
     max_memory = memory_limit * 1024 * 1024  # in MB
-    result = ResponseData(message="")
+    result = RunResponse(message="")
 
     thread = threading.Thread(target=target)
     thread.start()

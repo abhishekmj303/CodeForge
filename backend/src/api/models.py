@@ -1,4 +1,6 @@
 import datetime
+import json
+import os
 
 from sqlmodel import Field, Session, SQLModel, create_engine, func, select
 
@@ -178,6 +180,29 @@ def init_db():
     sqlite_file_name = "codeforge.db"
     sqlite_url = f"sqlite:///{sqlite_file_name}"
 
+    new_db = True
+    if os.path.exists(sqlite_file_name):
+        new_db = False
+
     engine = create_engine(sqlite_url, echo=True)
 
     SQLModel.metadata.create_all(engine)
+
+    if new_db:
+        # try:
+        Users(username="admin").create()
+        with open("problems.json") as f:
+            problems_json = json.load(f)
+        print("Adding problems entries:", len(problems_json))
+        for problem in problems_json:
+            new_problem = Problems(
+                title=problem["title"],
+                difficulty=problem["difficulty"],
+                problem_statement=problem["problem_statement"],
+                constraints=problem["constraints"],
+                owner="admin",
+            ).add()
+            new_problem.add_testcases(problem["testcases"])
+        # except Exception as e:
+        #     os.remove(sqlite_file_name)
+        #     raise Exception(f"Error while adding problems to the database: {e}")

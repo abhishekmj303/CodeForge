@@ -1,9 +1,22 @@
 from fastapi import APIRouter, Response
+from pydantic import BaseModel
 
 from api.models import Problems
 from api.routes import Error
 
 router = APIRouter(prefix="/problems")
+
+
+class PostTestcase(BaseModel):
+    input: str
+    output: str
+
+
+class PostProblem(BaseModel):
+    title: str
+    difficulty: str
+    problem_statement: str
+    testcases: list[PostTestcase]
 
 
 @router.post("/")
@@ -18,8 +31,8 @@ def add_problem(problem: Problems, response: Response) -> Problems | Error:
 
 
 @router.get("/")
-def get_all_problems() -> list[Problems]:
-    return Problems.get_all()
+def get_all_problems(username: str) -> list[Problems]:
+    return Problems.get_all(username)
 
 
 @router.get("/{problem_code}")

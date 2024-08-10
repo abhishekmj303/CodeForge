@@ -23,7 +23,7 @@ COMPILED = {Language.C, Language.CPP}
 
 class RunRequest(BaseModel):
     source_code: str
-    input_data: str
+    input_data: str | None = None
     language: Language
     username: str | None = None
 
@@ -40,7 +40,7 @@ class RunResponse(BaseModel):
 
 
 @router.post("/")
-def run(request_data: RunRequest) -> RunResponse:
+def run_code(request_data: RunRequest) -> RunResponse:
     source_code = request_data.source_code
     input_data = request_data.input_data
     language = request_data.language

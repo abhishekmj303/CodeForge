@@ -1,10 +1,18 @@
 from fastapi import APIRouter, Response
+from pydantic import BaseModel
 
-from api.models import Problems, TestCases
+from api.models import Problems, Submissions, TestCases
 from api.routes import Error, ProblemDetails, ProblemList
-from api.routes.run import RunRequest, RunResponse, run_command
+from api.routes.run import RunRequest, RunResponse, run_code
 
 router = APIRouter(prefix="/problems")
+
+class SubmitResult(BaseModel):
+    is_solved: bool
+    total_passed: int
+    elapsed_time: float
+    memory_used: float
+    results: list[RunResponse]
 
 
 @router.post("/")
@@ -70,10 +78,53 @@ def get_problem(problem_code: str, response: Response) -> ProblemDetails | Error
 
 
 @router.post("/{problem_code}/submit")
-def submit_problem(run_req: RunRequest, response: Response) -> RunResponse:
+def submit_problem(
+    problem_code: str, run_req: RunRequest, response: Response
+) -> SubmitResult | Error:
     if run_req.username is None:
         response.status_code = 403
         return Error(
             "Forbidden",
             "You can't submit the solution, please login.",
         )
+
+    problem = Problems.get(problem_code)
+    if not problem:
+        response.status_code = 404
+        return Error("Problem not found", "Invalid problem code.")
+
+    testcases = TestCases.get(problem.id)
+    all_results = []
+    total_passed, total_elapsed_time, total_memory_used = 0, 0, 0
+    for testcase in testcases:
+        run_req.input_data = testcase.input
+        result = run_code(run_req)
+        if result.message == "Success":
+            if result.stdout.strip("\n ") == testcase.output.strip("\n "):
+                total_passed += 1
+                total_elapsed_time += result.elapsed_time
+                total_memory_used += result.memory_usage
+        all_results.append(result)
+
+    is_solved = total_passed == len(testcases)
+
+    submission = Submissions.get(problem.id, run_req.username)
+    if not submission:
+        submission = Submissions(
+            problem_id=problem.id,
+            contest_id=problem.contest_id,
+            username=run_req.username,
+            is_solved=is_solved,
+            total_passed=total_passed,
+            elapsed_time=total_elapsed_time,
+            memory_used=total_memory_used,
+        )
+    submission.add()
+
+    return SubmitResult(
+        is_solved=is_solved,
+        total_passed=total_passed,
+        elapsed_time=total_elapsed_time,
+        memory_used=total_memory_used,
+        results=all_results,
+    )

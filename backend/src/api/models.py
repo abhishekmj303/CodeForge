@@ -152,8 +152,27 @@ class Submissions(SQLModel, table=True):
     contest_id: int | None = Field(foreign_key="contests.id")
     username: str = Field(foreign_key="users.username")
     is_solved: bool = False
+    total_passed: int
     elapsed_time: float
     memory_used: float
+    updated_at: datetime.datetime = Field(default=datetime.datetime.now)
+
+    def add(self):
+        with Session(engine) as session:
+            self.updated_at = datetime.datetime.now()
+            session.add(self)
+            session.commit()
+            session.refresh(self)
+
+    def get(problem_id: int, username: str):
+        with Session(engine) as session:
+            submission = session.exec(
+                select(Submissions).where(
+                    Submissions.problem_id == problem_id,
+                    Submissions.username == username,
+                )
+            ).first()
+            return submission
 
 
 def generate_code(string: str, table: SQLModel) -> str | None:

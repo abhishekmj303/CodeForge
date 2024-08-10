@@ -19,7 +19,11 @@ import { Link } from "react-router-dom";
 
 import AddProblem from "./AddProblem";
 
-const Problems: React.FC = () => {
+interface Problems {
+  type: string;
+}
+
+const Problems: React.FC<Problems> = ({ type }) => {
   const problems = [
     {
       id: "two-sum",
@@ -38,7 +42,7 @@ const Problems: React.FC = () => {
             A list of currently available problems.
           </CardDescription>
         </div>
-        <AddProblem />
+        {type === "arena" && <AddProblem />}
       </CardHeader>
       <CardContent>
         <Table className="">

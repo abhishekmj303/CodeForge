@@ -4,7 +4,7 @@ import Problems from "../components/arena/Problems";
 const Arena: React.FC = () => {
   return (
     <div className="flex justify-center">
-      <Problems />
+      <Problems type="arena" />
     </div>
   );
 };

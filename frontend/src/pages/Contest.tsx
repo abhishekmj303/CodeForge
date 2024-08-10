@@ -6,7 +6,7 @@ const Contest: React.FC = () => {
   return (
     <div className="flex justify-between p-4">
       <div className="w-1/2 pr-2">
-        <Problems />
+        <Problems type="contest" />
       </div>
       <div className="w-1/2 pl-2">
         <Leaderboard />

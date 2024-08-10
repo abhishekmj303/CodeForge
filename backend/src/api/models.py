@@ -1,6 +1,6 @@
 import datetime
 
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, create_engine, select, func
 
 
 class Users(SQLModel, table=True):
@@ -37,7 +37,7 @@ class Contests(SQLModel, table=True):
             contests = session.exec(select(Contests)).all()
             return contests
 
-    def get_details(code: str):
+    def get(code: str):
         with Session(engine) as session:
             contest = session.exec(
                 select(Contests).where(Contests.code == code)
@@ -50,6 +50,24 @@ class Contests(SQLModel, table=True):
                 select(Problems).where(Problems.contest_id == code)
             ).all()
             return problems
+        
+    def get_leaderboard(id: int):
+        with Session(engine) as session:
+            statement = (
+                select(
+                    Submissions.username,
+                    func.count(Submissions.is_solved).label("solved_problems"),
+                    func.sum(Submissions.elapsed_time).label("total_time")
+                )
+                .where(Submissions.contest_id == id, Submissions.is_solved == True)
+                .group_by(Submissions.username)
+                .order_by(
+                    func.count(Submissions.is_solved).desc(),
+                    func.sum(Submissions.elapsed_time)
+                )
+            )
+            leaderboard = session.exec(statement).all()
+            return leaderboard
 
 
 class Problems(SQLModel, table=True):

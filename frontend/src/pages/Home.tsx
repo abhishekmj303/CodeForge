@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import NavigationCard from "@/components/NavigationCard"; // Adjust import path as necessary
 import {
@@ -9,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import axiosInstance from "@/axiosInstance";
+
 // Define the card data
 const cardData = [
   {
@@ -52,6 +55,7 @@ const cardData = [
 const Home: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [tempUserName, setTempUserName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const storedUserName = sessionStorage.getItem("username");
@@ -60,13 +64,29 @@ const Home: React.FC = () => {
     }
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (tempUserName.trim() === "") {
       return;
     }
-    setUserName(tempUserName);
-    sessionStorage.setItem("username", tempUserName);
-    setTempUserName("");
+
+    try {
+      // Send POST request to create the user
+      console.log("Creating user with username:", tempUserName);
+      const response = await axiosInstance.post("/user", {
+        username: tempUserName,
+      });
+      console.log(response);
+      if (response.status === 200) {
+        setUserName(tempUserName);
+        sessionStorage.setItem("username", tempUserName);
+        setTempUserName("");
+      } else {
+        setErrorMessage("Failed to create user");
+      }
+    } catch (error) {
+      console.error("There was an error creating the user:", error);
+      setErrorMessage("There was an error creating the user");
+    }
   };
 
   return (
@@ -106,6 +126,9 @@ const Home: React.FC = () => {
                 Submit
               </Button>
             </div>
+            {errorMessage && (
+              <div className="text-red-500 mt-2">{errorMessage}</div>
+            )}
           </DialogContent>
         </Dialog>
       )}

@@ -7,32 +7,63 @@ from api.routes import Error
 router = APIRouter(prefix="/problems")
 
 
-class PostTestcase(BaseModel):
-    input: str
-    output: str
-
-
-class PostProblem(BaseModel):
+class ProblemPost(BaseModel):
     title: str
     difficulty: str
     problem_statement: str
-    testcases: list[PostTestcase]
+    constraints: str
+    testcases: list[dict[str, str]]
+    owner: str
+
+
+class ProblemInfo(BaseModel):
+    code: str
+    title: str
+    difficulty: str
+    is_solved: bool
 
 
 @router.post("/")
-def add_problem(problem: Problems, response: Response) -> Problems | Error:
-    if not problem.add():
+def add_problem(problem: ProblemPost, response: Response) -> Problems | Error:
+    new_problem = Problems(
+        title=problem.title,
+        difficulty=problem.difficulty,
+        problem_statement=problem.problem_statement,
+        constraints=problem.constraints,
+        owner=problem.owner,
+    )
+    if not new_problem.add():
         response.status_code = 400
         return Error(
             "Cannot add problem",
             "Invalid title: Only use alphanumeric characters and spaces, or try a different title.",
         )
-    return problem
+    try:
+        new_problem.add_testcases(problem.testcases)
+    except KeyError:
+        response.status_code = 400
+        return Error(
+            "Cannot add testcases to problem",
+            "Invalid testcases: Each testcase must have 'input' and 'output' keys.",
+        )
+
+    return new_problem
 
 
 @router.get("/")
-def get_all_problems(username: str) -> list[Problems]:
-    return Problems.get_all(username)
+def get_all_problems(username: str) -> list[ProblemInfo]:
+    problems = Problems.get_all(username)
+    problems_info = []
+    for problem in problems:
+        problems_info.append(
+            ProblemInfo(
+                code=problem.code,
+                title=problem.title,
+                difficulty=problem.difficulty,
+                is_solved=problem.is_solved,
+            )
+        )
+    return problems_info
 
 
 @router.get("/{problem_code}")

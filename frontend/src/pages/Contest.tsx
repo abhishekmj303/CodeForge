@@ -10,8 +10,6 @@ const Contest: React.FC = () => {
   // get the contest id from the URL
   const { contest_code } = useParams<{ contest_code: string }>();
 
-  // const [problems, setProblems] = React.useState([]);
-
   console.log(contest_code);
 
   useEffect(() => {
@@ -19,16 +17,6 @@ const Contest: React.FC = () => {
     if (!storedUserName) {
       navigate("/");
     }
-    // try {
-    //   axiosInstance
-    //     .get(`/contests/${contest_code}/problems`)
-    //     .then((response) => {
-    //       console.log(response.data);
-    //       setProblems(response.data);
-    //     });
-    // } catch (error) {
-    //   console.error("Error fetching contest problems", error);
-    // }
   }, [navigate, contest_code]);
   return (
     <div className="flex justify-between p-4">
@@ -36,7 +24,7 @@ const Contest: React.FC = () => {
         <Problems type="contest" contest_code={contest_code} />
       </div>
       <div className="w-1/2 pl-2">
-        <Leaderboard />
+        <Leaderboard contest_code={contest_code} />
       </div>
     </div>
   );

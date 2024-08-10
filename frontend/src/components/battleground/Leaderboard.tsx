@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "@/axiosInstance";
 import {
   Table,
   TableBody,
@@ -16,27 +17,34 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const Leaderboard: React.FC = () => {
-  const leaderboard = [
-    {
-      rank: 1,
-      username: "john_doe",
-      solved: 5,
-      timeTaken: "1h 30m",
-    },
-    {
-      rank: 2,
-      username: "jane_smith",
-      solved: 4,
-      timeTaken: "2h 10m",
-    },
-    {
-      rank: 3,
-      username: "alice_wonder",
-      solved: 4,
-      timeTaken: "2h 45m",
-    },
-  ];
+// Define the type for leaderboard entries
+interface LeaderboardEntry {
+  username: string;
+  solved_problems: number;
+  total_time: string;
+}
+
+interface LeaderboardProps {
+  contest_code: string;
+}
+
+const Leaderboard: React.FC<LeaderboardProps> = ({ contest_code }) => {
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const response = await axiosInstance.get(`/contests/${contest_code}/leaderboard`);
+        console.log(response.data);
+        setLeaderboard(response.data);
+      } catch (err) {
+        setError("Failed to fetch leaderboard.");
+      }
+    };
+
+    fetchLeaderboard();
+  }, [contest_code]);
 
   return (
     <Card className="w-[40rem]">
@@ -47,26 +55,30 @@ const Leaderboard: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-left">Rank</TableHead>
-              <TableHead className="text-center">Username</TableHead>
-              <TableHead className="text-center">Solved</TableHead>
-              <TableHead className="text-right">Time Taken</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {leaderboard.map((entry) => (
-              <TableRow key={entry.rank}>
-                <TableCell className="text-left">{entry.rank}</TableCell>
-                <TableCell className="text-center">{entry.username}</TableCell>
-                <TableCell className="text-center">{entry.solved}</TableCell>
-                <TableCell className="text-right">{entry.timeTaken}</TableCell>
+        {error ? (
+          <div className="text-red-500">{error}</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Rank</TableHead>
+                <TableHead className="text-center">Username</TableHead>
+                <TableHead className="text-center">Solved</TableHead>
+                <TableHead className="text-right">Time Taken</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {leaderboard.map((entry, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-left">{index + 1}</TableCell>
+                  <TableCell className="text-center">{entry.username}</TableCell>
+                  <TableCell className="text-center">{entry.solved_problems}</TableCell>
+                  <TableCell className="text-right">{entry.total_time}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );

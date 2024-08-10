@@ -96,8 +96,7 @@ def get_contest_problems(contest_code: str, response: Response):
         return Error("Contest not found", "Invalid contest code.")
     problems = contest.get_problems()
     if not problems:
-        response.status_code = 404
-        return Error("Problems not found", "No problems found for this contest.")
+        return []
     problems_info = []
     for problem, is_solved in problems:
         if is_solved is None:
@@ -122,8 +121,9 @@ def get_contest_leaderboard(contest_code: str, response: Response) -> list[dict]
     
     leaderboard = Contests.get_leaderboard(contest.id)
     if not leaderboard:
-        response.status_code = 404
-        return Error("Leaderboard not found", "No submissions found for this contest.")
+        # response.status_code = 404
+        # return Error("Leaderboard not found", "No submissions found for this contest.")
+        return []
 
     return [
         {

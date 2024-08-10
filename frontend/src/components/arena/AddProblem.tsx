@@ -71,7 +71,7 @@ const AddProblem = () => {
   };
 
   const saveProblem = () => {
-    // Reset the problem form to default values
+    // Reset the state to default values
     setCurrentProblem({
       title: "",
       statement: "",
@@ -97,37 +97,37 @@ const AddProblem = () => {
               Add a new problem to the list of available problems.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-6">
-            <div className="space-y-2">
+          <div className="space-y-4">
+            <div className="space-y-1">
               <Label htmlFor="problem-title" className="mb-1">
                 Title
               </Label>
               <Input
                 id="problem-title"
-                className="w-full"
+                className="w-11/12 ml-1"
                 placeholder="Problem Title"
                 value={currentProblem.title}
                 onChange={(e) => handleInputChange(e, "title")}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="problem-statement" className="mb-1">
                 Problem Statement
               </Label>
               <Textarea
                 id="problem-statement"
-                className="w-full"
+                className="w-11/12 ml-1"
                 placeholder="Problem Statement"
                 value={currentProblem.statement}
                 onChange={(e) => handleInputChange(e, "statement")}
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="problem-difficulty" className="mb-1">
                 Difficulty Level
               </Label>
               <RadioGroup
-                defaultValue={currentProblem.difficulty}
+                value={currentProblem.difficulty}
                 onValueChange={(value) =>
                   setCurrentProblem((prev) => ({ ...prev, difficulty: value }))
                 }
@@ -137,7 +137,7 @@ const AddProblem = () => {
                   <RadioGroupItem
                     value="easy"
                     id="option-easy"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6]"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#14b8a6] checked:border-[#14b8a6]"
                   />
                   <Label htmlFor="option-easy" className="text-[#14b8a6]">
                     Easy
@@ -147,7 +147,7 @@ const AddProblem = () => {
                   <RadioGroupItem
                     value="medium"
                     id="option-medium"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b]"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#f59e0b] checked:border-[#f59e0b]"
                   />
                   <Label htmlFor="option-medium" className="text-[#f59e0b]">
                     Medium
@@ -157,7 +157,7 @@ const AddProblem = () => {
                   <RadioGroupItem
                     value="hard"
                     id="option-hard"
-                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444]"
+                    className="w-4 h-4 border border-gray-800 rounded-full checked:bg-[#ef4444] checked:border-[#ef4444]"
                   />
                   <Label htmlFor="option-hard" className="text-[#ef4444]">
                     Hard
@@ -165,23 +165,23 @@ const AddProblem = () => {
                 </div>
               </RadioGroup>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="problem-constraints" className="mb-1">
                 Constraints
               </Label>
               <Textarea
                 id="problem-constraints"
-                className="w-full"
+                className="w-11/12 ml-1"
                 placeholder="Constraints"
                 value={currentProblem.constraints}
                 onChange={(e) => handleInputChange(e, "constraints")}
               />
             </div>
-            <div className="space-y-6 mt-4">
-              <h3 className="font-semibold text-lg">Test Cases</h3>
+            <div className="space-y-4 mt-4">
+              <h3 className="font-semibold">Test Cases</h3>
               {currentProblem.testCases.map((testCase, index) => (
                 <div key={index} className="p-4 border rounded-lg">
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {editTestCaseIndex === index ? (
                       <>
                         <Label htmlFor={`test-input-${index}`}>Input</Label>
@@ -208,7 +208,7 @@ const AddProblem = () => {
                         />
                         <Button
                           size="sm"
-                          className="mt-2 w-full bg-[#14b8a6] text-white hover:bg-[#059669]"
+                          className="mt-2"
                           onClick={saveTestCase}
                         >
                           Save Test Case
@@ -222,7 +222,7 @@ const AddProblem = () => {
                         <p>
                           <strong>Output:</strong> {testCase.output}
                         </p>
-                        <div className="flex space-x-2 mt-2">
+                        <div className="flex space-x-2 mt-1">
                           <Button
                             size="sm"
                             variant="outline"
@@ -246,11 +246,7 @@ const AddProblem = () => {
                   </div>
                 </div>
               ))}
-              <Button
-                size="sm"
-                className="mt-2 w-full bg-[#FFAD60] text-white hover:bg-[#FFA250]"
-                onClick={addTestCase}
-              >
+              <Button size="sm" onClick={addTestCase}>
                 Add Test Case
               </Button>
             </div>

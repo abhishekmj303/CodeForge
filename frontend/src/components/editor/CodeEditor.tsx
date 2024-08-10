@@ -1,4 +1,4 @@
-import { useRef, useState, FC } from "react";
+import { useRef, useState, useEffect, FC } from "react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import ThemeSelector from "./ThemeSelector";
@@ -32,6 +32,12 @@ const CodeEditor: FC<CodeEditorProps> = ({
     c: `\n#include <stdio.h>\n\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`,
     cpp: `\n#include <iostream>\n\nint main() {\n\tstd::cout << "Hello, World!" << std::endl;\n\treturn 0;\n}\n`,
   };
+
+  useEffect(() => {
+    const initialCode = CODE_SNIPPETS[language];
+    setValue(initialCode);
+    onCodeChange(initialCode);
+  }, [language]);
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;

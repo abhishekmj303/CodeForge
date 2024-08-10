@@ -36,7 +36,7 @@ const cardData = [
       "Add test cases",
     ],
     route: "/arena",
-    color: "#FF4C4C",
+    color: "#FB6D48",
   },
   {
     title: "Battleground",
@@ -48,7 +48,7 @@ const cardData = [
       "Compete in various modes",
     ],
     route: "/battleground",
-    color: "#1d4ed8",
+    color: "#4A249D",
   },
 ];
 

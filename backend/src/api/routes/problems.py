@@ -101,6 +101,7 @@ def submit_problem(
         result = run_code(run_req)
         if result.message == "Success":
             if result.stdout.strip("\n ") == testcase.output.strip("\n "):
+                result.test_passed = True
                 total_passed += 1
                 total_elapsed_time += result.elapsed_time
                 total_memory_used += result.memory_usage

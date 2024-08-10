@@ -35,7 +35,7 @@ class RunResponse(BaseModel):
     elapsed_time: float | None = None
     memory_usage: float | None = None
     timeout: bool = False
-    total_passed: int | None = None
+    test_passed: bool = False
     message: str
 
 

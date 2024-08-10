@@ -9,7 +9,9 @@ import {
 const Navbar: React.FC = () => {
   return (
     <div className="p-2 flex flex-row justify-between items-center shadow-md">
-      <p className="text-2xl font-medium m-2">CodeForge</p>
+      <Link to="/" className="">
+        <p className="text-2xl font-medium m-2">CodeForge</p>
+      </Link>
       <NavigationMenu>
         <NavigationMenuList>
           {/* <NavigationMenuItem>

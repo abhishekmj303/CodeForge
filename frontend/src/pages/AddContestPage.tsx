@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,6 +19,15 @@ import { Pencil } from "lucide-react";
 import { ArrowUp } from "lucide-react";
 
 export default function AddContestPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUserName = sessionStorage.getItem("username");
+    if (!storedUserName) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   const [contestDetails, setContestDetails] = useState({
     title: "",
     details: "",

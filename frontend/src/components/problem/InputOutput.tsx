@@ -118,7 +118,7 @@ const InputOutput: React.FC = () => {
             <div key={example.id} className="font-semibold my-4 px-4">
               <p className="text-sm font-medium mt-4 text-gray-500">Input:</p>
               <textarea
-                className="w-full rounded-lg border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
                 value={example.inputText}
                 onChange={(e) => handleInputChange(example.id, e.target.value)}
                 disabled={example.id !== "custom"}
@@ -129,7 +129,7 @@ const InputOutput: React.FC = () => {
                     Output:
                   </p>
                   <textarea
-                    className="w-full rounded-lg border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                    className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
                     value={example.outputText}
                     onChange={(e) =>
                       handleOutputChange(example.id, e.target.value)

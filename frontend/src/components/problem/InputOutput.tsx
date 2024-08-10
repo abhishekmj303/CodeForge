@@ -13,12 +13,13 @@ interface TestCase {
   outputText: string;
 }
 
-const InputOutput: React.FC<InputOutputProps> = ({ problem_id }) => {
+const InputOutput: React.FC<InputOutputProps> = ({ problem_id, code, language }) => {
   const [activeTestCaseId, setActiveTestCaseId] = useState<number>(0);
   const [problem, setProblem] = useState<{ examples: TestCase[] }>({
     examples: [],
   });
   const [loading, setLoading] = useState(true);
+  const [runOutput, setRunOutput] = useState<string>("");
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -66,6 +67,40 @@ const InputOutput: React.FC<InputOutputProps> = ({ problem_id }) => {
     }));
   };
 
+  const mapLanguage = (language: string) => {
+    switch (language) {
+      case "javascript":
+        return "js";
+      case "python":
+        return "py";
+      case "c":
+        return "c";
+      case "cpp":
+        return "cpp";
+      default:
+        return "py"; // default to Python if something goes wrong
+    }
+  };
+
+  const handleRun = async () => {
+    if (activeTestCaseId === problem.examples.length - 1) {
+      const customInput = problem.examples[activeTestCaseId].inputText;
+      try {
+        const mappedLanguage = mapLanguage(language);
+        const response = await axiosInstance.post("/run", {
+          source_code: code, 
+          input_data: customInput,
+          language: mappedLanguage, 
+          username: sessionStorage.getItem("username"),
+        });
+        setRunOutput(response.data.stdout || "No output");
+      } catch (error) {
+        console.error("Error running code:", error);
+        setRunOutput("An error occurred");
+      }
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -80,6 +115,7 @@ const InputOutput: React.FC<InputOutputProps> = ({ problem_id }) => {
           <Button
             className="bg-[#423F3E] text-white px-4 py-2 rounded hover:bg-[#555555]"
             size="sm"
+            onClick={handleRun}
           >
             <Play size={16} className="mr-2" />
             Run
@@ -157,6 +193,18 @@ const InputOutput: React.FC<InputOutputProps> = ({ problem_id }) => {
                       handleOutputChange(example.id, e.target.value)
                     }
                     disabled
+                  />
+                </>
+              )}
+              {example.id === "custom" && (
+                <>
+                  <p className="text-sm font-medium mt-4 text-gray-500">
+                    Run Output:
+                  </p>
+                  <textarea
+                    className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                    value={runOutput}
+                    readOnly
                   />
                 </>
               )}

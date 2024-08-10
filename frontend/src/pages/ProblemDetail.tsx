@@ -29,6 +29,10 @@ const ProblemDetail: React.FC = () => {
     }
   }, [navigate]);
 
+  const [code, setCode] = useState<string>("");
+  const [language, setLanguage] = useState<string>("python");
+
+
   return (
     <ResizablePanelGroup direction="horizontal" className="gap-[1.5px]">
       <ResizablePanel
@@ -44,14 +48,14 @@ const ProblemDetail: React.FC = () => {
             defaultSize={50}
             className="rounded-[7px] border-[2px] border-[#555555]"
           >
-            <CodeEditor />
+            <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode}/>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel
             defaultSize={50}
             className="rounded-[7px] border-[2px] border-[#555555]"
           >
-            <InputOutput problem_id={problem_id} />
+            <InputOutput problem_id={problem_id} code={code} language={language} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>

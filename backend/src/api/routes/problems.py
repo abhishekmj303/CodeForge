@@ -1,26 +1,9 @@
 from fastapi import APIRouter, Response
-from pydantic import BaseModel
 
 from api.models import Problems, TestCases
-from api.routes import Error
+from api.routes import Error, ProblemDetails, ProblemList
 
 router = APIRouter(prefix="/problems")
-
-
-class ProblemDetails(BaseModel):
-    title: str
-    difficulty: str
-    problem_statement: str
-    constraints: str
-    testcases: list[dict[str, str]]
-    owner: str
-
-
-class ProblemList(BaseModel):
-    code: str
-    title: str
-    difficulty: str
-    is_solved: bool
 
 
 @router.post("/")
@@ -54,13 +37,15 @@ def add_problem(problem: ProblemDetails, response: Response) -> Problems | Error
 def get_all_problems(username: str) -> list[ProblemList]:
     problems = Problems.get_all(username)
     problems_info = []
-    for problem in problems:
+    for problem, is_solved in problems:
+        if is_solved is None:
+            is_solved = False
         problems_info.append(
             ProblemList(
                 code=problem.code,
                 title=problem.title,
                 difficulty=problem.difficulty,
-                is_solved=problem.is_solved,
+                is_solved=is_solved,
             )
         )
     return problems_info

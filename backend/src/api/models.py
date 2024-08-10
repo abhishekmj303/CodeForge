@@ -46,10 +46,12 @@ class Contests(SQLModel, table=True):
             ).first()
             return contest
 
-    def get_problems(code: str):
+    def get_problems(self):
         with Session(engine) as session:
             problems = session.exec(
-                select(Problems).where(Problems.contest_id == code)
+                select(Problems, Submissions.is_solved)
+                .join(Submissions, isouter=True)
+                .where(Problems.contest_id == self.id)
             ).all()
             return problems
         

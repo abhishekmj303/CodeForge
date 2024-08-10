@@ -70,9 +70,13 @@ class Problems(SQLModel, table=True):
             session.add(self)
             session.commit()
 
-    def get_all():
+    def get_all(username: str):
         with Session(engine) as session:
-            problems = session.exec(select(Problems)).all()
+            problems = session.exec(
+                select(Problems, Submissions.is_solved)
+                .join(Submissions, isouter=True)
+                .where(Problems.contest_id is None)
+            ).all()
             return problems
 
     def get(code: str):
@@ -94,11 +98,13 @@ class TestCases(SQLModel, table=True):
             session.add(self)
             session.commit()
 
+
 class Submissions(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     problem_id: int = Field(foreign_key="problems.id")
+    contest_id: int | None = Field(foreign_key="contests.id")
     username: str = Field(foreign_key="users.username")
-    is_solve: bool = False
+    is_solved: bool = False
     elapsed_time: float
     memory_used: float
 

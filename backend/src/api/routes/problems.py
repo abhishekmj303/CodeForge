@@ -2,6 +2,7 @@ from fastapi import APIRouter, Response
 
 from api.models import Problems, TestCases
 from api.routes import Error, ProblemDetails, ProblemList
+from api.routes.run import RunRequest, RunResponse, run_command
 
 router = APIRouter(prefix="/problems")
 
@@ -66,3 +67,13 @@ def get_problem(problem_code: str, response: Response) -> ProblemDetails | Error
         testcases=[{"input": t.input, "output": t.output} for t in testcases],
         owner=problem.owner,
     )
+
+
+@router.post("/{problem_code}/submit")
+def submit_problem(run_req: RunRequest, response: Response) -> RunResponse:
+    if run_req.username is None:
+        response.status_code = 403
+        return Error(
+            "Forbidden",
+            "You can't submit the solution, please login.",
+        )

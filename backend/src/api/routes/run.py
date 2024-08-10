@@ -25,6 +25,7 @@ class RunRequest(BaseModel):
     source_code: str
     input_data: str
     language: Language
+    username: str | None = None
 
 
 class RunResponse(BaseModel):
@@ -34,6 +35,7 @@ class RunResponse(BaseModel):
     elapsed_time: float | None = None
     memory_usage: float | None = None
     timeout: bool = False
+    total_passed: int | None = None
     message: str
 
 

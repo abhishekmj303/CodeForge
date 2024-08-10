@@ -6,12 +6,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Button } from "@/components/ui/button";
+import { Play } from "lucide-react";
 
 const Playground: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [outputValue, setOutputValue] = useState<string>("");
   const [code, setCode] = useState<string>("");
-  const [language, setLanguage] = useState<string>("javascript");
+  const [language, setLanguage] = useState<string>("python");
 
   const mapLanguage = (language: string) => {
     switch (language) {
@@ -24,7 +26,7 @@ const Playground: React.FC = () => {
       case "cpp":
         return "cpp";
       default:
-        return "js"; // default to JavaScript if something goes wrong
+        return "py"; // default to JavaScript if something goes wrong
     }
   };
 
@@ -72,15 +74,17 @@ const Playground: React.FC = () => {
             <div className="flex flex-col h-full p-2 bg-black-200">
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold mr-2">Output</span>
-                <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                <Button
+                  className="bg-[#423F3E] text-white px-4 py-2 rounded hover:bg-[#555555]"
+                  size="sm"
                   onClick={handleRun}
                 >
+                  <Play size={16} className="mr-2" />
                   Run
-                </button>
+                </Button>
               </div>
               <div
-                className="w-full h-full p-2 border rounded bg-black overflow-auto"
+                className="w-full h-full p-2 border rounded bg-[#18181b] overflow-auto"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {outputValue}
@@ -92,7 +96,7 @@ const Playground: React.FC = () => {
             <div className="flex flex-col h-full p-2 bg-black-200">
               <span className="font-semibold mb-2">Input</span>
               <textarea
-                className="w-full h-full p-2 border rounded bg-gray-900 text-white"
+                className="w-full h-full p-2 border rounded bg-[#2d2d2d] text-white"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Enter your input here..."

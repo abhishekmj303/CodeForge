@@ -231,25 +231,6 @@ export default function AddContestPage() {
                           <p><strong>Input:</strong> {testCase.input}</p>
                           <p><strong>Output:</strong> {testCase.output}</p>
                         </div>
-                        {/* <div className="flex space-x-2 mt-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditTestCase(testCaseIndex)}
-                          >
-                            Edit
-                            <Pencil size={16} className="ml-2"/>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            color="red"
-                            onClick={() => handleDeleteTestCase(testCaseIndex)}
-                          >
-                            Delete
-                            <Trash2 size={16} className="ml-2"/>
-                          </Button>
-                        </div> */}
                       </div>
                     ))}
                   </div>
@@ -260,7 +241,7 @@ export default function AddContestPage() {
                 <h2 className="font-semibold mb-2">
                   {editIndex !== null ? "Edit Problem" : "Add Problem"}
                 </h2>
-                <div className="space-y-1">
+                <div className="space-y-1 m-2">
                   <Label htmlFor="problem-title">Title</Label>
                   <Input
                     id="problem-title"
@@ -269,7 +250,7 @@ export default function AddContestPage() {
                     onChange={(e) => handleInputChange(e, "title")}
                   />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 m-2">
                   <Label htmlFor="problem-statement">Problem Statement</Label>
                   <Textarea
                     id="problem-statement"
@@ -278,27 +259,27 @@ export default function AddContestPage() {
                     onChange={(e) => handleInputChange(e, "statement")}
                   />
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 m-2">
                   <Label>Difficulty Level</Label>
                 <RadioGroup
                     value={currentProblem.difficulty}
                     onValueChange={handleDifficultyChange}
                 >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mt-1">
                     <RadioGroupItem value="Easy" id="easy" />
                     <Label htmlFor="easy">Easy</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mt-1">
                     <RadioGroupItem value="Medium" id="medium" />
                     <Label htmlFor="medium">Medium</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 mt-1">
                     <RadioGroupItem value="Difficult" id="difficult" />
                     <Label htmlFor="difficult">Difficult</Label>
                     </div>
                 </RadioGroup>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-1 m-2">
                   <Label htmlFor="problem-constraints">Constraints</Label>
                   <Textarea
                     id="problem-constraints"
@@ -307,7 +288,7 @@ export default function AddContestPage() {
                     onChange={(e) => handleInputChange(e, "constraints")}
                   />
                 </div>
-                <div className="space-y-4 mt-4">
+                <div className="space-y-4 mt-2">
                   <h3 className="font-semibold">Test Cases</h3>
                   {currentProblem.testCases.map((testCase, index) => (
                     <div key={index} className="p-4 border rounded-lg">

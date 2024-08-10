@@ -23,7 +23,7 @@ const CodeEditor: FC<CodeEditorProps> = ({
 }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
-  const [language, setLanguage] = useState<Language>("javascript");
+  const [language, setLanguage] = useState<Language>("python");
   const [theme, setTheme] = useState<Theme>("vs-dark");
 
   const CODE_SNIPPETS: Record<Language, string> = {

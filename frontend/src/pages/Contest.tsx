@@ -30,8 +30,9 @@ const Contest: React.FC = () => {
   }, [navigate, contest_code]);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://your-server-address/ws/${contest_code}`);
-
+    console.log("Connecting to websocket");
+    const ws = new WebSocket(`ws://localhost:8000/contests/ws/${contest_code}`);  
+    
     ws.onmessage = (event) => {
       if (event.data === "reload") {
         window.location.reload();

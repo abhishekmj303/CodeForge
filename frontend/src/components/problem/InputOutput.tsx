@@ -120,7 +120,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
           language: mappedLanguage,
           username: sessionStorage.getItem("username"),
         });
-        setRunOutput(response.data.stdout || "No output"); // Update runOutput
+        setRunOutput(response.data.stdout + response.data.stderr || "No output"); // Update runOutput
       } catch (error) {
         console.error("Error running code:", error);
         setRunOutput("An error occurred"); // Handle error cases

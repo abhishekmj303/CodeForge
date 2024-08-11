@@ -47,7 +47,7 @@ const Playground: React.FC = () => {
       });
 
       const data = response.data;
-      setOutputValue(data.stdout || data.stderr || "No output");
+      setOutputValue(data.stdout + data.stderr || "No output");
       setElapsedTime(data.elapsed_time);
       setMemoryUsage(data.memory_usage);
 

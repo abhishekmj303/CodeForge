@@ -132,12 +132,12 @@ export default function AddContestPage() {
         details: contestDetails.details,
         owner: sessionStorage.getItem("username"),
       });
-  
+
       const contestData = contestResponse.data;
-  
+
       if (contestData && contestData.code) {
-        const contestCode = contestData.code; 
-  
+        const contestCode = contestData.code;
+
         const formattedProblems = problems.map((problem) => ({
           title: problem.title,
           problem_statement: problem.statement, // Adjust key names if needed
@@ -146,15 +146,22 @@ export default function AddContestPage() {
           owner: sessionStorage.getItem("username"),
           testcases: problem.testcases, // Ensure this matches backend expectations
         }));
-  
+
         // Send problems to backend
         try {
-          await axiosInstance.post(`/contests/${contestCode}/problems`, formattedProblems);
+          await axiosInstance.post(
+            `/contests/${contestCode}/problems`,
+            formattedProblems
+          );
           alert("Contest and problems added successfully!");
           navigate("/battleground");
         } catch (problemError) {
           if (problemError.response && problemError.response.data) {
-            alert(`Error: ${problemError.response.data.message || "Failed to add problems."}`);
+            alert(
+              `Error: ${
+                problemError.response.data.message || "Failed to add problems."
+              }`
+            );
           } else {
             alert("An unexpected error occurred. Please try again.");
           }
@@ -162,13 +169,14 @@ export default function AddContestPage() {
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        alert(`Error: ${error.response.data.message || "Failed to add contest."}`);
+        alert(
+          `Error: ${error.response.data.message || "Failed to add contest."}`
+        );
       } else {
         alert("An unexpected error occurred. Please try again.");
       }
     }
   };
-  
 
   return (
     <div className="flex flex-col items-center p-8">
@@ -277,31 +285,35 @@ export default function AddContestPage() {
                     </div>
                   </h2>
                   <div className="space-y-1">
-                    <p>
+                    <p className="whitespace-pre-wrap text-sm">
                       <strong>Title:</strong> {problem.title}
                     </p>
-                    <p>
-                      <strong>Statement:</strong> {problem.statement}
-                    </p>
-                    <p>
+                    <pre className="whitespace-pre-wrap text-sm">
+                      <strong className="">Statement:</strong>{" "}
+                      {problem.statement}
+                    </pre>
+                    <p className="whitespace-pre-wrap text-sm">
                       <strong>Difficulty Level:</strong> {problem.difficulty}
                     </p>
-                    <p>
-                      <strong>Constraints:</strong> {problem.constraints}
+                    <p className="whitespace-pre-wrap text-sm">
+                      <strong>Constraints:</strong>
+                      {" \n"} {problem.constraints}
                     </p>
-                    <h3 className="font-semibold mt-2">Test Cases</h3>
+                    <h3 className="font-semibold mt-2 text-sm">Test Cases</h3>
                     {problem.testcases.map((testCase, testCaseIndex) => (
                       <div
                         key={testCaseIndex}
                         className="p-2 border rounded-lg mt-2"
                       >
                         <div className="space-y-1">
-                          <p>
-                            <strong>Input:</strong> {testCase.input}
-                          </p>
-                          <p>
-                            <strong>Output:</strong> {testCase.output}
-                          </p>
+                          <pre className="whitespace-pre-wrap text-sm">
+                            <strong>Input:</strong> {" \n"}
+                            {testCase.input}
+                          </pre>
+                          <pre className="whitespace-pre-wrap text-sm">
+                            <strong>Output:</strong> {" \n"}
+                            {testCase.output}
+                          </pre>
                         </div>
                       </div>
                     ))}
@@ -389,7 +401,7 @@ export default function AddContestPage() {
                         {editTestCaseIndex === index ? (
                           <>
                             <Label htmlFor={`test-input-${index}`}>Input</Label>
-                            <Input
+                            <Textarea
                               id={`test-input-${index}`}
                               placeholder="Test Case Input"
                               value={testCase.input}
@@ -404,7 +416,7 @@ export default function AddContestPage() {
                             <Label htmlFor={`test-output-${index}`}>
                               Output
                             </Label>
-                            <Input
+                            <Textarea
                               id={`test-output-${index}`}
                               placeholder="Test Case Output"
                               value={testCase.output}
@@ -426,12 +438,14 @@ export default function AddContestPage() {
                           </>
                         ) : (
                           <>
-                            <p>
-                              <strong>Input:</strong> {testCase.input}
-                            </p>
-                            <p>
-                              <strong>Output:</strong> {testCase.output}
-                            </p>
+                            <pre>
+                              <strong>Input:</strong>
+                              {" \n"} {testCase.input}
+                            </pre>
+                            <pre>
+                              <strong>Output:</strong>
+                              {" \n"} {testCase.output}
+                            </pre>
                             <div className="flex space-x-2 mt-1">
                               <Button
                                 size="sm"

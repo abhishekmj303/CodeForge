@@ -85,7 +85,7 @@ const AddProblem = () => {
         })),
         owner: username, // Replace with actual owner identifier
       });
-  
+
       if (response.status === 200) {
         // Handle successful save
         console.log("Problem added successfully", response.data);
@@ -104,7 +104,6 @@ const AddProblem = () => {
       }
     }
   };
-  
 
   return (
     <Dialog>
@@ -210,7 +209,7 @@ const AddProblem = () => {
                     {editTestCaseIndex === index ? (
                       <>
                         <Label htmlFor={`test-input-${index}`}>Input</Label>
-                        <Input
+                        <Textarea
                           id={`test-input-${index}`}
                           placeholder="Test Case Input"
                           value={testCase.input}
@@ -219,7 +218,7 @@ const AddProblem = () => {
                           }
                         />
                         <Label htmlFor={`test-output-${index}`}>Output</Label>
-                        <Input
+                        <Textarea
                           id={`test-output-${index}`}
                           placeholder="Test Case Output"
                           value={testCase.output}
@@ -241,12 +240,14 @@ const AddProblem = () => {
                       </>
                     ) : (
                       <>
-                        <p>
-                          <strong>Input:</strong> {testCase.input}
-                        </p>
-                        <p>
-                          <strong>Output:</strong> {testCase.output}
-                        </p>
+                        <pre>
+                          <strong>Input:</strong>
+                          {" \n"} {testCase.input}
+                        </pre>
+                        <pre>
+                          <strong>Output:</strong>
+                          {" \n"} {testCase.output}
+                        </pre>
                         <div className="flex space-x-2 mt-1">
                           <Button
                             size="sm"

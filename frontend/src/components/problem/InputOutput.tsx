@@ -294,7 +294,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
                 value={
                   activeTestCaseId === problem.examples.length - 1
                     ? runOutput
-                    : subResponse?.results[activeTestCaseId]?.stdout ||
+                    : subResponse?.results[activeTestCaseId]?.stdout + subResponse?.results[activeTestCaseId]?.stderr ||
                       "No output"
                 }
                 readOnly

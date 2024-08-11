@@ -47,6 +47,14 @@ class Contests(SQLModel, table=True):
                 select(Contests).where(Contests.code == code)
             ).first()
             return contest
+        
+    #get code from contest id
+    def get_code(id: int):
+        with Session(engine) as session:
+            contest = session.exec(
+                select(Contests).where(Contests.id == id)
+            ).first()
+            return contest.code
 
     def get_problems(self, username: str):
         with Session(engine) as session:

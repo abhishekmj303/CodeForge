@@ -108,6 +108,7 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             # command = ' '.join(command)
 
             command = nsjail_cmd + time_cmd + command
+            # command = time_cmd + command
             print("Command: ", command)
 
             # start_time = time.time()

@@ -35,45 +35,6 @@ interface SubmitResponse {
   results: Result[];
 }
 
-const sampleResponse: SubmitResponse = {
-  is_solved: false,
-  total_passed: 2,
-  elapsed_time: 1234,
-  memory_used: 5678,
-  results: [
-    {
-      stdout: "Output 1",
-      stderr: "",
-      return_code: 0,
-      elapsed_time: 500,
-      memory_usage: 1024,
-      timeout: false,
-      test_passed: false,
-      message: "First result",
-    },
-    {
-      stdout: "Output 2",
-      stderr: "",
-      return_code: 0,
-      elapsed_time: 400,
-      memory_usage: 2048,
-      timeout: false,
-      test_passed: true,
-      message: "Second result",
-    },
-    {
-      stdout: "Output 3",
-      stderr: "",
-      return_code: 0,
-      elapsed_time: 334,
-      memory_usage: 512,
-      timeout: false,
-      test_passed: true,
-      message: "Third result",
-    },
-  ],
-};
-
 const InputOutput: React.FC<InputOutputProps> = ({
   problem_id,
   code,
@@ -85,8 +46,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
     examples: [],
   });
   const [loading, setLoading] = useState(true);
-  const [runOutput, setRunOutput] = useState<string>("");
-
+  const [runOutput, setRunOutput] = useState<string>(""); // Initialize as an empty string
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -145,7 +105,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
       case "cpp":
         return "cpp";
       default:
-        return "py"; // default to Python if something goes wrong
+        return "py"; // Default to Python if an unknown language is provided
     }
   };
 
@@ -160,21 +120,24 @@ const InputOutput: React.FC<InputOutputProps> = ({
           language: mappedLanguage,
           username: sessionStorage.getItem("username"),
         });
-        setRunOutput(response.data.stdout || "No output");
+        setRunOutput(response.data.stdout || "No output"); // Update runOutput
       } catch (error) {
         console.error("Error running code:", error);
-        setRunOutput("An error occurred");
+        setRunOutput("An error occurred"); // Handle error cases
       }
     }
   };
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post(`/problems/${problem_id}/submit`, {
-        source_code: code,
-        language: mapLanguage(language),
-        username: sessionStorage.getItem("username"),
-      });
+      const response = await axiosInstance.post(
+        `/problems/${problem_id}/submit`,
+        {
+          source_code: code,
+          language: mapLanguage(language),
+          username: sessionStorage.getItem("username"),
+        }
+      );
       setSubResponse(response.data);
     } catch (error) {
       console.error("Error submitting code:", error);
@@ -323,22 +286,19 @@ const InputOutput: React.FC<InputOutputProps> = ({
                   />
                 </>
               )}
-              {subResponse && (
-                <>
-                  <p className="text-sm font-medium mt-4 text-gray-500">
-                    Run Output:
-                  </p>
-                  <textarea
-                    className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
-                    value={
-                      activeTestCaseId === problem.examples.length - 1
-                        ? runOutput
-                        : subResponse.results[activeTestCaseId]?.stdout || "No output"
-                    }
-                    readOnly
-                  />
-                </>
-              )}
+              <p className="text-sm font-medium mt-4 text-gray-500">
+                Run Output:
+              </p>
+              <textarea
+                className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                value={
+                  activeTestCaseId === problem.examples.length - 1
+                    ? runOutput
+                    : subResponse?.results[activeTestCaseId]?.stdout ||
+                      "No output"
+                }
+                readOnly
+              />
             </div>
           ) : null
         )}

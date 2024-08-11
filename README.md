@@ -3,7 +3,7 @@
 ### Frontend
 
 - **React.js**: JavaScript library for building user interfaces.
-- **axios**: Promise-based HTTP client for the browser and Node.js.
+- **axios**: Promise-based HTTP client for the browser.
 
 ### Backend
 

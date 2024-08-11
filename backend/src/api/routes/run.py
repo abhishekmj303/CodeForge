@@ -83,7 +83,7 @@ def run_code(request_data: RunRequest) -> RunResponse:
         command = [f"{file_name}.out"]
 
     result = run_command(command, input_data, timeout=5, memory_limit=100)
-    os.remove(f.name)
+    os.remove(file_name)
 
     if result.message:
         return RunResponse(message=result.message)
@@ -102,8 +102,10 @@ def run_code(request_data: RunRequest) -> RunResponse:
 def run_command(command, input_string, timeout=5, memory_limit=100):
     def target(command, input_string):
         try:
-            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib -R /lib64/ -R /usr/ -B /tmp --".split()
+            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib/ -R /lib64/ -R /usr/ -R /etc/alternatives/ -B /tmp --keep_env --".split()
             time_cmd = ["/bin/time", "-a", "-f", "%E %M", "--"]
+            # time_cmd = "/bin/time -a -f %E %M --"
+            # command = ' '.join(command)
 
             command = nsjail_cmd + time_cmd + command
             print("Command: ", command)
@@ -124,7 +126,7 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             # end_time = time.time()
             split_stderr = stderr.splitlines()
             if len(split_stderr) > 1:
-                stderr, time_output = split_stderr[:-1], split_stderr[-1]
+                stderr, time_output = "\n".join(split_stderr[:-1]), split_stderr[-1]
             else:
                 stderr, time_output = "", stderr
 

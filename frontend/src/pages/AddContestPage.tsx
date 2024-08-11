@@ -87,74 +87,7 @@ export default function AddContestPage() {
     setErrors({ ...errors, testCases: "" });
   };
 
-  const validateContestDetails = () => {
-    let isValid = true;
-    const newErrors = {
-      contestTitle: "",
-      details: "",
-    };
-
-    if (contestDetails.contestTitle.trim() === "") {
-      newErrors.contestTitle = "Title is required.";
-      isValid = false;
-    }
-    if (contestDetails.details.trim() === "") {
-      newErrors.details = "Details are required.";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const validateProblem = () => {
-    let isValid = true;
-    const newErrors = {
-      title: "",
-      statement: "",
-      constraints: "",
-      testCases: "",
-    };
-
-    if (currentProblem.title.trim() === "") {
-      newErrors.title = "Title is required.";
-      isValid = false;
-    }
-    if (currentProblem.statement.trim() === "") {
-      newErrors.statement = "Statement is required.";
-      isValid = false;
-    }
-    if (currentProblem.constraints.trim() === "") {
-      newErrors.constraints = "Constraints are required.";
-      isValid = false;
-    }
-    if (currentProblem.testcases.some(
-      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
-    )) {
-      newErrors.testCases = "All test cases must have input and output.";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const validateTestCase = () => {
-    let isValid = true;
-    const newErrors = {
-      testCases: "",
-    };
-
-    if (currentProblem.testcases.some(
-      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
-    )) {
-      newErrors.testCases = "All test cases must have input and output.";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  }
-
   const saveProblem = () => {
-    if (!validateProblem()) return;
 
   
     if (editIndex !== null) {
@@ -187,7 +120,6 @@ export default function AddContestPage() {
   };
 
   const saveContestDetails = () => {
-    if (!validateContestDetails()) return;
     setIsEditingDetails(false);
   };
 
@@ -205,7 +137,6 @@ export default function AddContestPage() {
   };
 
   const saveTestCase = () => {
-    if (!validateTestCase()) return;
     setEditTestCaseIndex(null);
   };
 

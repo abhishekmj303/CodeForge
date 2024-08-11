@@ -69,7 +69,6 @@ const AddProblem = () => {
   };
 
   const saveTestCase = () => {
-    if (!validateTestCase()) return;
     setEditTestCaseIndex(null);
   };
 
@@ -81,55 +80,7 @@ const AddProblem = () => {
     if (editTestCaseIndex === index) setEditTestCaseIndex(null);
   };
 
-  const validateProblem = () => {
-    let isValid = true;
-    const newErrors = {
-      title: "",
-      statement: "",
-      constraints: "",
-      testCases: "",
-    };
-
-    if (currentProblem.title.trim() === "") {
-      newErrors.title = "Title is required.";
-      isValid = false;
-    }
-    if (currentProblem.statement.trim() === "") {
-      newErrors.statement = "Statement is required.";
-      isValid = false;
-    }
-    if (currentProblem.constraints.trim() === "") {
-      newErrors.constraints = "Constraints are required.";
-      isValid = false;
-    }
-    if (currentProblem.testCases.some(
-      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
-    )) {
-      newErrors.testCases = "All test cases must have input and output.";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  };
-
-  const validateTestCase = () => {
-    let isValid = true;
-    const newErrors = {
-      testCases: "",
-    };
-
-    if (currentProblem.testCases.some(
-      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
-    )) {
-      newErrors.testCases = "All test cases must have input and output.";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid;
-  }
-
   const saveProblem = async () => {
-    if (!validateProblem()) return;
     try {
       const username = sessionStorage.getItem("username");
       const response = await axiosInstance.post("/problems", {

@@ -107,7 +107,7 @@ def run_code(request_data: RunRequest) -> RunResponse:
     return result
 
 
-def run_command(command, input_string, tempdir, timeout=2, memory_limit=1024):
+def run_command(command, input_string, tempdir, timeout=5, memory_limit=1000):
     def target(command, input_string):
         try:
             print(tempdir)

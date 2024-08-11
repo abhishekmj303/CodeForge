@@ -24,16 +24,16 @@
         "problem_statement": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.",
         "testcases": [
             {
-                "input": "4\n2, 7, 11, 15\n9",
-                "output": "0, 1"
+                "input": "4\n2 7 11 15\n9",
+                "output": "0 1"
             },
             {
-                "input": "3\n3, 2, 4\n6",
-                "output": "1, 2"
+                "input": "3\n3 2 4\n6",
+                "output": "1 2"
             },
             {
-                "input": "2\n3, 3\n6",
-                "output": "0, 1"
+                "input": "2\n3 3\n6",
+                "output": "0 1"
             }
         ],
         "difficulty": "easy",
@@ -44,12 +44,12 @@
         "problem_statement": "Given a string s, return the longest palindromic substring in s.",
         "testcases": [
             {
-                "input": "\"babad\"",
-                "output": "\"bab\""
+                "input": "babad",
+                "output": "bab"
             },
             {
-                "input": "\"cbbd\"",
-                "output": "\"bb\""
+                "input": "cbbd",
+                "output": "bb"
             }
         ],
         "difficulty": "medium",
@@ -60,11 +60,11 @@
         "problem_statement": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
         "testcases": [
             {
-                "input": "1\n1, 3\n1\n2",
+                "input": "1\n1 3\n1\n2",
                 "output": "2.00000"
             },
             {
-                "input": "2\n1, 2\n2\n3, 4",
+                "input": "2\n1 2\n2\n3 4",
                 "output": "2.50000"
             }
         ],
@@ -76,15 +76,15 @@
         "problem_statement": "Given a string s, find the length of the longest substring without repeating characters.",
         "testcases": [
             {
-                "input": "\"abcabcbb\"",
+                "input": "abcabcbb",
                 "output": "3"
             },
             {
-                "input": "\"bbbbb\"",
+                "input": "bbbbb",
                 "output": "1"
             },
             {
-                "input": "\"pwwkew\"",
+                "input": "pwwkew",
                 "output": "3"
             }
         ],

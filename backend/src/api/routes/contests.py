@@ -88,13 +88,13 @@ def add_contest_problem(
 
 
 @router.get("/{contest_code}/problems")
-def get_contest_problems(contest_code: str, response: Response):
+def get_contest_problems(contest_code: str, username: str, response: Response):
     contest = Contests.get(contest_code)
     print("Contest :", contest)
     if not contest:
         response.status_code = 404
         return Error("Contest not found", "Invalid contest code.")
-    problems = contest.get_problems()
+    problems = contest.get_problems(username)
     if not problems:
         return []
     problems_info = []

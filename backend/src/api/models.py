@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 
-from sqlmodel import Field, Session, SQLModel, create_engine, func, select
+from sqlmodel import Field, Session, SQLModel, case, create_engine, func, select
 
 
 class Users(SQLModel, table=True):
@@ -48,12 +48,22 @@ class Contests(SQLModel, table=True):
             ).first()
             return contest
 
-    def get_problems(self):
+    def get_problems(self, username: str):
         with Session(engine) as session:
+            subquery = (
+                select(Submissions).where(Submissions.username == username).subquery()
+            )
+
             problems = session.exec(
-                select(Problems, Submissions.is_solved)
-                .join(Submissions, isouter=True)
-                .where(Problems.contest_id == self.id)
+                select(Problems, subquery.c.is_solved)
+                .join(
+                    subquery,
+                    Problems.id == subquery.c.problem_id,
+                    isouter=True,
+                )
+                .where(
+                    Problems.contest_id.is_(None),
+                )
             ).all()
             return problems
         
@@ -101,10 +111,20 @@ class Problems(SQLModel, table=True):
 
     def get_all(username: str):
         with Session(engine) as session:
+            subquery = (
+                select(Submissions).where(Submissions.username == username).subquery()
+            )
+
             problems = session.exec(
-                select(Problems, Submissions.is_solved)
-                .join(Submissions, isouter=True)
-                .where(Problems.contest_id.is_(None))
+                select(Problems, subquery.c.is_solved)
+                .join(
+                    subquery,
+                    Problems.id == subquery.c.problem_id,
+                    isouter=True,
+                )
+                .where(
+                    Problems.contest_id.is_(None),
+                )
             ).all()
             return problems
 

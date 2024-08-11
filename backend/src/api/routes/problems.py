@@ -121,6 +121,11 @@ def submit_problem(
             elapsed_time=total_elapsed_time,
             memory_used=total_memory_used,
         )
+    else:
+        submission.is_solved = is_solved
+        submission.total_passed = total_passed
+        submission.elapsed_time = total_elapsed_time
+        submission.memory_used = total_memory_used
     submission.add()
 
     # Add the broadcast to the background tasks

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, BackgroundTasks
 from pydantic import BaseModel
 
 from api.models import Problems, Submissions, TestCases
-from api.routes import Error, ProblemDetails, ProblemList
+from api.routes import Error, ProblemDetails, ProblemList, manager
 from api.routes.run import RunRequest, RunResponse, run_code
+
 
 router = APIRouter(prefix="/problems")
 
@@ -79,7 +80,7 @@ def get_problem(problem_code: str, response: Response) -> ProblemDetails | Error
 
 @router.post("/{problem_code}/submit")
 def submit_problem(
-    problem_code: str, run_req: RunRequest, response: Response
+    problem_code: str, run_req: RunRequest, response: Response, background_tasks: BackgroundTasks
 ) -> SubmitResult | Error:
     if run_req.username is None:
         response.status_code = 403
@@ -121,6 +122,9 @@ def submit_problem(
             memory_used=total_memory_used,
         )
     submission.add()
+
+    # Add the broadcast to the background tasks
+    background_tasks.add_task(manager.broadcast, problem.contest_id, "reload")
 
     return SubmitResult(
         is_solved=is_solved,

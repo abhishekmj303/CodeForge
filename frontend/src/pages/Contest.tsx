@@ -18,6 +18,21 @@ const Contest: React.FC = () => {
       navigate("/");
     }
   }, [navigate, contest_code]);
+
+  useEffect(() => {
+    const ws = new WebSocket(`ws://your-server-address/ws/${contest_code}`);
+    
+    ws.onmessage = (event) => {
+      if (event.data === "reload") {
+        window.location.reload(); 
+      }
+    };
+
+    return () => {
+      ws.close();  
+    };
+  }, [contest_code]);
+
   return (
     <div className="flex justify-between p-4">
       <div className="w-1/2 pr-2">

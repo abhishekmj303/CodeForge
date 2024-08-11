@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Response, WebSocket, WebSocketDisconnect, BackgroundTasks
 from pydantic import BaseModel
 
 from api.models import Contests, Problems
-from api.routes import Error, ProblemDetails, ProblemList
+from api.routes import Error, ProblemDetails, ProblemList, manager
 
 router = APIRouter(prefix="/contests")
 
@@ -133,3 +133,13 @@ def get_contest_leaderboard(contest_code: str, response: Response) -> list[dict]
         }
         for entry in leaderboard
     ]
+
+@router.websocket("/ws/{contest_code}")
+async def websocket_endpoint(websocket: WebSocket, contest_code: str):
+    await manager.connect(websocket, contest_code)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # Handle incoming messages if needed
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, contest_code)

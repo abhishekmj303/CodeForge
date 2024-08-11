@@ -62,7 +62,7 @@ class Contests(SQLModel, table=True):
                     isouter=True,
                 )
                 .where(
-                    Problems.contest_id.is_(None),
+                    Problems.contest_id == self.id,
                 )
             ).all()
             return problems

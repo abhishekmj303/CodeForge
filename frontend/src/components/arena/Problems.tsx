@@ -45,8 +45,9 @@ const Problems: React.FC<ProblemsProps> = ({ type, contest_code }) => {
           );
           setProblems(response.data);
         } else if (type.toLowerCase() === "contest") {
+          const username = sessionStorage.getItem("username");
           const response = await axiosInstance.get(
-            `/contests/${contest_code}/problems`
+            `/contests/${contest_code}/problems?username=${username}`
           );
           setProblems(response.data);
         }

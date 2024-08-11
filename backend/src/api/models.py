@@ -233,13 +233,23 @@ def init_db():
         with open("problems.json") as f:
             problems_json = json.load(f)
         print("Adding problems entries:", len(problems_json))
-        for problem in problems_json:
+        contest = Contests(
+            title="CodeForge 2024",
+            details="A platform for competitive programming",
+            owner="admin",
+        ).add()
+        for i, problem in enumerate(problems_json):
+            if i % 2 != 0:
+                contest_id = contest.id
+            else:
+                contest_id = None
             new_problem = Problems(
                 title=problem["title"],
                 difficulty=problem["difficulty"],
                 problem_statement=problem["problem_statement"],
                 constraints=problem["constraints"],
                 owner="admin",
+                contest_id=contest_id,
             )
             if not new_problem.add():
                 raise Exception(f"Invalid title: {new_problem.title}")

@@ -5,12 +5,7 @@ import classNames from "classnames";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 
 interface ContestCardProps extends React.ComponentProps<typeof Card> {
   title: string;

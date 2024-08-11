@@ -137,6 +137,11 @@ def get_contest_leaderboard(contest_code: str, response: Response) -> list[dict]
 @router.websocket("/ws/{contest_code}")
 async def websocket_endpoint(websocket: WebSocket, contest_code: str):
     await manager.connect(websocket, contest_code)
+    print()
+    print()
+    print(f"Connected to {contest_code}")
+    print()
+    print()
     try:
         while True:
             data = await websocket.receive_text()

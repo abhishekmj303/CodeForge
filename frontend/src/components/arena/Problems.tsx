@@ -57,7 +57,8 @@ const Problems: React.FC<ProblemsProps> = ({ type, contest_code }) => {
     };
 
     fetchProblems();
-  }, []);
+  }, [type, contest_code]);
+  // }, []);
 
   return (
     <Card className="w-[40rem] m-5">

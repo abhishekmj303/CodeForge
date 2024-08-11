@@ -1,4 +1,6 @@
+import os
 import resource
+import shutil
 import subprocess
 import tempfile
 import threading
@@ -47,40 +49,52 @@ def run_code(request_data: RunRequest) -> RunResponse:
     language = request_data.language
 
     # save tmp file
-    with tempfile.NamedTemporaryFile(
-        mode="w", prefix="codeforge_", suffix=f".{language.value}"
-    ) as f:
+    tempdir = tempfile.mkdtemp(prefix="codeforge_")
+    with open(os.path.join(tempdir, f"main.{language.value}"), "w") as f:
+        print(source_code)
         f.write(source_code)
-        f.flush()
+        file_name = f.name
+        # f.flush()
 
-        if language == Language.PYTHON:
-            command = ["/bin/python3", f.name]
-        elif language == Language.C:
-            command = ["/bin/gcc", f.name, "-o", f"{f.name}.out", "-lm"]
-        elif language == Language.CPP:
-            command = ["/bin/g++", f.name, "-o", f"{f.name}.out"]
-        elif language == Language.JAVASCRIPT:
-            command = ["/bin/node", f.name]
-        else:
-            return RunResponse(message="Invalid language")
+    print(file_name)
+    if language == Language.PYTHON:
+        command = ["/bin/python3", file_name]
+    elif language == Language.C:
+        command = ["/bin/gcc", file_name, "-o", f"{file_name}.out", "-lm"]
+    elif language == Language.CPP:
+        command = [
+            "/bin/g++",
+            "-I/usr/include/c++/13",
+            "-I/usr/include/c++/13/x86_64-suse-linux",
+            file_name,
+            "-o",
+            f"{file_name}.out",
+        ]
+    elif language == Language.JAVASCRIPT:
+        command = ["/bin/node", file_name]
+    else:
+        return RunResponse(message="Invalid language")
 
-        if language in COMPILED:
-            result = run_command(command, input_data, timeout=5, memory_limit=100)
-            if result.message:
-                return RunResponse(message=result.message)
-
-            if result.timeout:
-                result.message = "Time limit exceeded"
-                return result
-            if result.return_code != 0:
-                result.message = "Compilation error"
-                return result
-
-            command = [f"{f.name}.out"]
-
-        result = run_command(command, input_data, timeout=5, memory_limit=100)
+    if language in COMPILED:
+        result = run_command(command, input_data, tempdir)
         if result.message:
             return RunResponse(message=result.message)
+
+        if result.timeout:
+            result.message = "Time limit exceeded"
+            return result
+        if result.return_code != 0:
+            result.message = "Compilation error"
+            return result
+
+        command = [f"{file_name}.out"]
+
+    result = run_command(command, input_data, tempdir)
+    # os.remove(file_name)
+    shutil.rmtree(tempdir)
+
+    if result.message:
+        return RunResponse(message=result.message)
 
     if result.timeout:
         result.message = "Time limit exceeded"
@@ -93,45 +107,51 @@ def run_code(request_data: RunRequest) -> RunResponse:
     return result
 
 
-def run_command(command, input_string, timeout=5, memory_limit=100):
-    def target():
+def run_command(command, input_string, tempdir, timeout=2, memory_limit=1024):
+    def target(command, input_string):
         try:
-            # if input_string and input_string[-1] != "\n":
-            #     input_string += "\n"
-            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib -R /lib64/ -R /usr/ -R /tmp --".split()
-            # nsjail_cmd.extend(["/bin/time", "-a", "-f", "'%E %M'", "--"])
+            print(tempdir)
+            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib/ -R /lib64/ -R /usr/ -R /etc/alternatives/ -B {tempdir} -D {tempdir} --keep_env --".split()
+            time_cmd = ["/bin/time", "-a", "-f", "%E %M", "--"]
+            # time_cmd = "/bin/time -a -f %E %M --"
+            # command = ' '.join(command)
 
-            start_time = time.time()
+            command = nsjail_cmd + time_cmd + command
+            # command = time_cmd + command
+            print("Command: ", command)
+
+            # start_time = time.time()
             process = subprocess.Popen(
-                nsjail_cmd + command,
+                command,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                shell=True,
-                preexec_fn=lambda: resource.setrlimit(
-                    resource.RLIMIT_AS, (max_memory, max_memory)
-                ),
+                # preexec_fn=lambda: resource.setrlimit(
+                #     resource.RLIMIT_AS, (max_memory, max_memory)
+                # ),
             )
 
             stdout, stderr = process.communicate(input=input_string, timeout=timeout)
-            end_time = time.time()
-            # if len(stdout.splitlines()) > 1:
-            #     stdout, time_output = stdout.rsplit("\n", 1)
-            # else:
-            #     stdout, time_output = "", stdout
+            # end_time = time.time()
+            split_stderr = stderr.splitlines()
+            if len(split_stderr) > 1:
+                stderr, time_output = "\n".join(split_stderr[:-1]), split_stderr[-1]
+            else:
+                stderr, time_output = "", stderr
 
             # Elapsed real time (in [hours:]minutes:seconds).
             # Maximum resident set size of the process during its lifetime, in Kilobytes.
 
             print("Stdout: ", stdout)
-            # print("Time output: ", time_output)
-            # elapsed_time, memory_usage = time_output.split()
-            # elapsed_time = time_to_seconds(elapsed_time)
-            # memory_usage = int(memory_usage)
+            print("Stderr: ", stderr)
+            print("Time output: ", time_output)
+            elapsed_time, memory_usage = time_output.split()
+            elapsed_time = time_to_seconds(elapsed_time)
+            memory_usage = int(memory_usage)
 
-            elapsed_time = end_time - start_time
-            memory_usage = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
+            # elapsed_time = end_time - start_time
+            # memory_usage = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
 
             if process.returncode == 137:
                 result.timeout = True
@@ -148,10 +168,10 @@ def run_command(command, input_string, timeout=5, memory_limit=100):
             traceback.print_exc()
             result.message = str(e)
 
-    max_memory = memory_limit * 1024 * 1024  # in MB
+    # max_memory = memory_limit * 1024 * 1024  # in MB
     result = RunResponse(message="")
 
-    thread = threading.Thread(target=target)
+    thread = threading.Thread(target=target, args=(command, input_string))
     thread.start()
     thread.join(timeout)
 

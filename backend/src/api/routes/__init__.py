@@ -38,12 +38,18 @@ class ConnectionManager:
 
     def disconnect(self, websocket: WebSocket, contest_code: str):
         self.active_connections[contest_code].remove(websocket)
-        if not self.active_connections[contest_code]:
-            del self.active_connections[contest_code]
+        # if not self.active_connections[contest_code]:
+        #     del self.active_connections[contest_code]
 
     async def broadcast(self, contest_code: str, message: str):
         if contest_code in self.active_connections:
+            print()
+            print(f"Broadcasting to {len(self.active_connections[contest_code])} connections")
+            print()
+            print()
             for connection in self.active_connections[contest_code]:
+                
                 await connection.send_text(message)
+                
 
 manager = ConnectionManager()

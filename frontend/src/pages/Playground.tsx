@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/axiosInstance";
 import CodeEditor from "@/components/editor/CodeEditor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const Playground: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -20,17 +22,19 @@ const Playground: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [statusColor, setStatusColor] = useState<string>("");
 
+  const [showRunSpinner, setShowRunSpinner] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const mapLanguage = (language: string) => {
     switch (language) {
-      case "javascript":
+      case "JavaScript":
         return "js";
-      case "python":
+      case "Python":
         return "py";
-      case "c":
+      case "C":
         return "c";
-      case "cpp":
+      case "C++":
         return "cpp";
       default:
         return "py"; // default to Python if something goes wrong
@@ -40,6 +44,7 @@ const Playground: React.FC = () => {
   const handleRun = async () => {
     try {
       const mappedLanguage = mapLanguage(language);
+      setShowRunSpinner(true);
       const response = await axiosInstance.post("/run", {
         source_code: code,
         input_data: inputValue,
@@ -47,7 +52,7 @@ const Playground: React.FC = () => {
       });
 
       const data = response.data;
-      setOutputValue(data.stdout || data.stderr || "No output");
+      setOutputValue(data.stdout + data.stderr || "No output");
       setElapsedTime(data.elapsed_time);
       setMemoryUsage(data.memory_usage);
 
@@ -59,6 +64,7 @@ const Playground: React.FC = () => {
       setStatusMessage("Error");
       setStatusColor("red");
     }
+    setShowRunSpinner(false);
   };
 
   useEffect(() => {
@@ -79,7 +85,11 @@ const Playground: React.FC = () => {
       >
         <div className="flex flex-col h-full">
           <div className="flex-1">
-            <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode} />
+            <CodeEditor
+              onLanguageChange={setLanguage}
+              onCodeChange={setCode}
+              problemId="playground-0001"
+            />
           </div>
         </div>
       </ResizablePanel>
@@ -94,10 +104,7 @@ const Playground: React.FC = () => {
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold mr-2">
                   Output
-                  <span
-                    className="ml-2"
-                    style={{ color: statusColor }}
-                  >
+                  <span className="ml-2" style={{ color: statusColor }}>
                     {statusMessage}
                   </span>
                 </span>
@@ -106,21 +113,32 @@ const Playground: React.FC = () => {
                   size="sm"
                   onClick={handleRun}
                 >
-                  <Play size={16} className="mr-2" />
+                  {showRunSpinner ? (
+                    <Spinner size="small" className="mr-2" />
+                  ) : (
+                    <Play size={16} className="mr-2" />
+                  )}
                   Run
                 </Button>
               </div>
               <div
-                className="w-full h-full p-2 border rounded bg-[#18181b] overflow-auto relative"
+                className="w-full h-full px-2 border rounded bg-[#18181b] overflow-auto relative"
                 style={{ whiteSpace: "pre-wrap" }}
               >
-                {outputValue}
-                <div className="absolute bottom-2 left-2 right-2 flex justify-between text-sm text-gray-400">
-                  <span>Elapsed Time: {elapsedTime !== null ? `${elapsedTime}s` : "N/A"}</span>
-                  <span>Memory Usage: {memoryUsage !== null ? `${memoryUsage}MB` : "N/A"}</span>
-                </div>
+                <ScrollArea className=" h-full w-full">
+                  {outputValue}
+                </ScrollArea>
               </div>
-
+              <div className="bottom-2 left-2 right-2 flex justify-between text-md text-gray-400 p-2">
+                  <span>
+                    Execution Time:{" "}
+                    {elapsedTime !== null ? `${elapsedTime}s` : "N/A"}
+                  </span>
+                  <span>
+                    Memory Usage:{" "}
+                    {memoryUsage !== null ? `${memoryUsage}MB` : "N/A"}
+                </span>
+              </div>
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />

@@ -10,34 +10,58 @@ const THEMES = {
 } as const;
 
 type Theme = keyof typeof THEMES;
-type Language = "javascript" | "python" | "c" | "cpp";
+type Language = "JavaScript" | "Python" | "C" | "C++";
 
 interface CodeEditorProps {
   onLanguageChange: (language: Language) => void;
   onCodeChange: (code: string) => void;
+  problemId: string | null | undefined;
 }
 
 const CodeEditor: FC<CodeEditorProps> = ({
   onLanguageChange,
   onCodeChange,
+  problemId,
 }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
-  const [language, setLanguage] = useState<Language>("python");
+  const [language, setLanguage] = useState<Language>("Python");
   const [theme, setTheme] = useState<Theme>("vs-dark");
 
   const CODE_SNIPPETS: Record<Language, string> = {
-    javascript: `\nfunction greet(name) {\n\tconsole.log("Hello, " + name + "!");\n}\n\ngreet("Alex");\n`,
-    python: `\ndef greet(name):\n\tprint("Hello, " + name + "!")\n\ngreet("Alex")\n`,
-    c: `\n#include <stdio.h>\n\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`,
-    cpp: `\n#include <iostream>\n\nint main() {\n\tstd::cout << "Hello, World!" << std::endl;\n\treturn 0;\n}\n`,
+    JavaScript: `\nfunction greet(name) {\n\tconsole.log("Hello, " + name + "!");\n}\n\ngreet("Alex");\n`,
+    Python: `\ndef greet(name):\n\tprint("Hello, " + name + "!")\n\ngreet("Alex")\n`,
+    C: `\n#include <stdio.h>\n\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`,
+    "C++": `\n#include <iostream>\n\nint main() {\n\tstd::cout << "Hello, World!" << std::endl;\n\treturn 0;\n}\n`,
   };
 
   useEffect(() => {
-    const initialCode = CODE_SNIPPETS[language];
-    setValue(initialCode);
-    onCodeChange(initialCode);
-  }, [language]);
+    // Get the username from sessionStorage
+    const username = sessionStorage.getItem("username");
+
+    if (!username || !problemId) {
+      // If username or problemId is not available, use default code snippet
+      const initialCode = CODE_SNIPPETS[language];
+      setValue(initialCode);
+      onCodeChange(initialCode);
+      return;
+    }
+
+    // Construct the key for localStorage using username, problemId, and language
+    const storageKey = `${username}-code-${problemId}-${language}`;
+
+    // Try to load the code from localStorage
+    const storedCode = localStorage.getItem(storageKey);
+
+    if (storedCode) {
+      setValue(storedCode);
+      onCodeChange(storedCode);
+    } else {
+      const initialCode = CODE_SNIPPETS[language];
+      setValue(initialCode);
+      onCodeChange(initialCode);
+    }
+  }, [language, problemId, onCodeChange]);
 
   const onMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
     editorRef.current = editor;
@@ -46,7 +70,6 @@ const CodeEditor: FC<CodeEditorProps> = ({
 
   const onSelectLanguage = (language: Language) => {
     setLanguage(language);
-    setValue(CODE_SNIPPETS[language]);
     onLanguageChange(language);
   };
 
@@ -54,9 +77,18 @@ const CodeEditor: FC<CodeEditorProps> = ({
     setTheme(theme);
   };
 
-  const handleCodeChange = (value: string | undefined) => {
-    setValue(value || "");
-    onCodeChange(value || "");
+  const handleCodeChange = (newValue: string | undefined) => {
+    const valueToSave = newValue || "";
+    setValue(valueToSave);
+    onCodeChange(valueToSave);
+
+    const username = sessionStorage.getItem("username");
+
+    if (username && problemId) {
+      // Save the code to localStorage with the username in the key
+      const storageKey = `${username}-code-${problemId}-${language}`;
+      localStorage.setItem(storageKey, valueToSave);
+    }
   };
 
   return (
@@ -74,8 +106,7 @@ const CodeEditor: FC<CodeEditorProps> = ({
           }}
           height="calc(100vh - 60px)"
           theme={theme}
-          language={language}
-          defaultValue={CODE_SNIPPETS[language]}
+          language={language.toLowerCase().replace("++", "pp")}
           onMount={onMount}
           value={value}
           onChange={handleCodeChange}

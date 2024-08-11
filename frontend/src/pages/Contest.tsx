@@ -29,20 +29,7 @@ const Contest: React.FC = () => {
     }
   }, [navigate, contest_code]);
 
-  useEffect(() => {
-    console.log("Connecting to websocket");
-    const ws = new WebSocket(`ws://localhost:8000/contests/ws/${contest_code}`);  
-    
-    ws.onmessage = (event) => {
-      if (event.data === "reload") {
-        window.location.reload();
-      }
-    };
 
-    return () => {
-      ws.close();
-    };
-  }, [contest_code]);
 
   return (
     <div className="p-4 flex flex-col overflow-hidden">

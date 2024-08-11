@@ -46,6 +46,31 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ contest_code }) => {
     fetchLeaderboard();
   }, [contest_code]);
 
+  useEffect(() => {
+    console.log("Connecting to websocket");
+    const ws = new WebSocket(`ws://localhost:8000/contests/ws/${contest_code}`);
+
+    ws.onmessage = (event) => {
+      if (event.data === "reload") {
+        const fetchLeaderboard = async () => {
+          try {
+            const response = await axiosInstance.get(`/contests/${contest_code}/leaderboard`);
+            console.log(response.data);
+            setLeaderboard(response.data);
+          } catch (err) {
+            setError("Failed to fetch leaderboard.");
+          }
+        };
+
+        fetchLeaderboard();
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [contest_code]);
+
   return (
     <Card className="w-[40rem]">
       <CardHeader>

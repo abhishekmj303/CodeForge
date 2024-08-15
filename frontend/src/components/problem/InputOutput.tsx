@@ -14,6 +14,7 @@ interface TestCase {
   id: string;
   inputText: string;
   outputText: string;
+  runText?: string;
 }
 
 interface Result {
@@ -94,6 +95,15 @@ const InputOutput: React.FC<InputOutputProps> = ({
     }));
   };
 
+  const handleRunTextChange = (id: string, newRunText: string) => {
+    setProblem((prev) => ({
+      ...prev,
+      examples: prev.examples.map((example) =>
+        example.id === id ? { ...example, runText: newRunText } : example
+      ),
+    }));
+  }
+
   const mapLanguage = (language: string) => {
     switch (language) {
       case "javascript":
@@ -110,22 +120,24 @@ const InputOutput: React.FC<InputOutputProps> = ({
   };
 
   const handleRun = async () => {
-    if (activeTestCaseId === problem.examples.length - 1) {
-      const customInput = problem.examples[activeTestCaseId].inputText;
-      try {
-        const mappedLanguage = mapLanguage(language);
-        const response = await axiosInstance.post("/run", {
-          source_code: code,
-          input_data: customInput,
-          language: mappedLanguage,
-          username: sessionStorage.getItem("username"),
-        });
-        setRunOutput(response.data.stdout + response.data.stderr || "No output"); // Update runOutput
-      } catch (error) {
-        console.error("Error running code:", error);
-        setRunOutput("An error occurred"); // Handle error cases
-      }
+    const runningTestCaseId = activeTestCaseId === problem.examples.length - 1 ? "custom" : String(activeTestCaseId + 1);
+    const customInput = problem.examples[activeTestCaseId].inputText;
+    var runText = "";
+    try {
+      const mappedLanguage = mapLanguage(language);
+      const response = await axiosInstance.post("/run", {
+        source_code: code,
+        input_data: customInput,
+        language: mappedLanguage,
+        username: sessionStorage.getItem("username"),
+      });
+      runText = response.data.stdout + response.data.stderr || "No output";
+    } catch (error) {
+      console.error("Error running code:", error);
+      runText = "An error occurred"; // Handle error cases
     }
+    setSubResponse(null);
+    handleRunTextChange(runningTestCaseId, runText);
   };
 
   const handleSubmit = async () => {
@@ -139,6 +151,10 @@ const InputOutput: React.FC<InputOutputProps> = ({
         }
       );
       setSubResponse(response.data);
+      for (let i = 0; i < problem.examples.length - 1; i++) {
+        const runText = response.data?.results[i]?.stdout + response.data?.results[i]?.stderr || "No output";
+        handleRunTextChange(String(i + 1), runText);
+      }
     } catch (error) {
       console.error("Error submitting code:", error);
     }
@@ -187,11 +203,11 @@ const InputOutput: React.FC<InputOutputProps> = ({
             <div className="flex flex-col mr-10">
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Execution Time:</p>
-                <p>{subResponse ? `${subResponse.elapsed_time} ms` : "N/A"}</p>
+                <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
               </div>
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Memory Usage:</p>
-                <p>{subResponse ? `${subResponse.memory_used} kb` : "N/A"}</p>
+                <p>{subResponse ? `${subResponse.memory_used} MB` : "N/A"}</p>
               </div>
             </div>
           </div>
@@ -208,11 +224,11 @@ const InputOutput: React.FC<InputOutputProps> = ({
             <div className="flex flex-col mr-10">
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Execution Time:</p>
-                <p>{subResponse ? `${subResponse.elapsed_time} ms` : "N/A"}</p>
+                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
               </div>
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Memory Usage:</p>
-                <p>{subResponse ? `${subResponse.memory_used} kb` : "N/A"}</p>
+                  <p>{subResponse ? `${subResponse.memory_used} MB` : "N/A"}</p>
               </div>
             </div>
           </div>
@@ -291,11 +307,9 @@ const InputOutput: React.FC<InputOutputProps> = ({
               </p>
               <textarea
                 className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
-                value={
-                  activeTestCaseId === problem.examples.length - 1
-                    ? runOutput
-                    : subResponse?.results[activeTestCaseId]?.stdout + subResponse?.results[activeTestCaseId]?.stderr ||
-                      "No output"
+                value={example.runText || ""}
+                onChange={(e) =>
+                  handleRunTextChange(example.id, e.target.value)
                 }
                 readOnly
               />

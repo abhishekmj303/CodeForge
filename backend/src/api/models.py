@@ -54,7 +54,8 @@ class Contests(SQLModel, table=True):
             contest = session.exec(
                 select(Contests).where(Contests.id == id)
             ).first()
-            return contest.code
+            if contest:
+                return contest.code
 
     def get_problems(self, username: str):
         with Session(engine) as session:

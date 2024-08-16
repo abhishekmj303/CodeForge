@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const Playground: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
@@ -19,6 +20,8 @@ const Playground: React.FC = () => {
   const [memoryUsage, setMemoryUsage] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [statusColor, setStatusColor] = useState<string>("");
+
+  const [showRunSpinner, setShowRunSpinner] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -40,6 +43,7 @@ const Playground: React.FC = () => {
   const handleRun = async () => {
     try {
       const mappedLanguage = mapLanguage(language);
+      setShowRunSpinner(true);
       const response = await axiosInstance.post("/run", {
         source_code: code,
         input_data: inputValue,
@@ -59,6 +63,7 @@ const Playground: React.FC = () => {
       setStatusMessage("Error");
       setStatusColor("red");
     }
+    setShowRunSpinner(false);
   };
 
   useEffect(() => {
@@ -94,10 +99,7 @@ const Playground: React.FC = () => {
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold mr-2">
                   Output
-                  <span
-                    className="ml-2"
-                    style={{ color: statusColor }}
-                  >
+                  <span className="ml-2" style={{ color: statusColor }}>
                     {statusMessage}
                   </span>
                 </span>
@@ -106,7 +108,11 @@ const Playground: React.FC = () => {
                   size="sm"
                   onClick={handleRun}
                 >
-                  <Play size={16} className="mr-2" />
+                  {showRunSpinner ? (
+                    <Spinner size="small" className="mr-2" />
+                  ) : (
+                    <Play size={16} className="mr-2" />
+                  )}
                   Run
                 </Button>
               </div>
@@ -116,11 +122,16 @@ const Playground: React.FC = () => {
               >
                 {outputValue}
                 <div className="absolute bottom-2 left-2 right-2 flex justify-between text-sm text-gray-400">
-                  <span>Elapsed Time: {elapsedTime !== null ? `${elapsedTime}s` : "N/A"}</span>
-                  <span>Memory Usage: {memoryUsage !== null ? `${memoryUsage}MB` : "N/A"}</span>
+                  <span>
+                    Execution Time:{" "}
+                    {elapsedTime !== null ? `${elapsedTime}s` : "N/A"}
+                  </span>
+                  <span>
+                    Memory Usage:{" "}
+                    {memoryUsage !== null ? `${memoryUsage}MB` : "N/A"}
+                  </span>
                 </div>
               </div>
-
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Play, CloudUpload } from "lucide-react";
 import axiosInstance from "@/axiosInstance";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
 
 interface InputOutputProps {
   problem_id: string;
@@ -48,6 +49,9 @@ const InputOutput: React.FC<InputOutputProps> = ({
   });
   const [loading, setLoading] = useState(true);
   const [runOutput, setRunOutput] = useState<string>(""); // Initialize as an empty string
+
+  const [showRunSpinner, setShowRunSpinner] = useState<boolean>(false);
+  const [showSubmitSpinner, setShowSubmitSpinner] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -102,7 +106,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
         example.id === id ? { ...example, runText: newRunText } : example
       ),
     }));
-  }
+  };
 
   const mapLanguage = (language: string) => {
     switch (language) {
@@ -120,9 +124,15 @@ const InputOutput: React.FC<InputOutputProps> = ({
   };
 
   const handleRun = async () => {
-    const runningTestCaseId = activeTestCaseId === problem.examples.length - 1 ? "custom" : String(activeTestCaseId + 1);
+    const runningTestCaseId =
+      activeTestCaseId === problem.examples.length - 1
+        ? "custom"
+        : String(activeTestCaseId + 1);
     const customInput = problem.examples[activeTestCaseId].inputText;
     var runText = "";
+
+    setShowRunSpinner(true);
+
     try {
       const mappedLanguage = mapLanguage(language);
       const response = await axiosInstance.post("/run", {
@@ -138,9 +148,12 @@ const InputOutput: React.FC<InputOutputProps> = ({
     }
     setSubResponse(null);
     handleRunTextChange(runningTestCaseId, runText);
+    setShowRunSpinner(false);
   };
 
   const handleSubmit = async () => {
+    setShowSubmitSpinner(true);
+
     try {
       const response = await axiosInstance.post(
         `/problems/${problem_id}/submit`,
@@ -152,12 +165,15 @@ const InputOutput: React.FC<InputOutputProps> = ({
       );
       setSubResponse(response.data);
       for (let i = 0; i < problem.examples.length - 1; i++) {
-        const runText = response.data?.results[i]?.stdout + response.data?.results[i]?.stderr || "No output";
+        const runText =
+          response.data?.results[i]?.stdout +
+            response.data?.results[i]?.stderr || "No output";
         handleRunTextChange(String(i + 1), runText);
       }
     } catch (error) {
       console.error("Error submitting code:", error);
     }
+    setShowSubmitSpinner(false);
   };
 
   if (loading) {
@@ -176,7 +192,11 @@ const InputOutput: React.FC<InputOutputProps> = ({
             size="sm"
             onClick={handleRun}
           >
-            <Play size={16} className="mr-2" />
+            {showRunSpinner ? (
+              <Spinner size="small" className="mr-2" />
+            ) : (
+              <Play size={16} className="mr-2" />
+            )}
             Run
           </Button>
           <Button
@@ -184,7 +204,11 @@ const InputOutput: React.FC<InputOutputProps> = ({
             size="sm"
             onClick={handleSubmit}
           >
-            <CloudUpload size={16} className="mr-2" />
+            {showSubmitSpinner ? (
+              <Spinner size="small" className="mr-2 text-green-500" />
+            ) : (
+              <CloudUpload size={16} className="mr-2" />
+            )}
             Submit
           </Button>
         </div>
@@ -224,11 +248,11 @@ const InputOutput: React.FC<InputOutputProps> = ({
             <div className="flex flex-col mr-10">
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Execution Time:</p>
-                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
+                <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
               </div>
               <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                 <p className="text-white">Memory Usage:</p>
-                  <p>{subResponse ? `${subResponse.memory_used} MB` : "N/A"}</p>
+                <p>{subResponse ? `${subResponse.memory_used} MB` : "N/A"}</p>
               </div>
             </div>
           </div>
@@ -306,7 +330,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
                 Run Output:
               </p>
               <textarea
-                className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
+                className="w-full h-fit rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
                 value={example.runText || ""}
                 onChange={(e) =>
                   handleRunTextChange(example.id, e.target.value)

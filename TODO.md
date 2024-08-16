@@ -9,7 +9,7 @@
   - [ ] Scrollable element
   - [ ] Total passed out of total test cases
 - [ ] Retain code after refresh
-- [ ] Button animations: Run, Submit
+- [x] Button animations: Run, Submit
 - [ ] Input field validation
 
 ## Backend

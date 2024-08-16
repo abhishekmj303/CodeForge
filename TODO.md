@@ -6,7 +6,7 @@
 - [ ] Problem InputOutput:
   - [ ] Stats for each test case, along with total
   - [x] Run only runs current test case
-  - [ ] Scrollable element
+  - [x] Scrollable element
   - [ ] Total passed out of total test cases
 - [x] Retain code after refresh
 - [x] Button animations: Run, Submit

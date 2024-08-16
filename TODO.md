@@ -2,7 +2,7 @@
 
 ## Frontend
 
-- [ ] Username
+- [x] Username
 - [ ] Problem InputOutput:
   - [ ] Stats for each test case, along with total
   - [x] Run only runs current test case

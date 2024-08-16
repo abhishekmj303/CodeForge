@@ -52,8 +52,12 @@ const cardData = [
   },
 ];
 
-const Home: React.FC = () => {
-  const [userName, setUserName] = useState("");
+interface HomeProps {
+  userName: string | null;
+  setUserName: (username: string) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ userName, setUserName }) => {
   const [tempUserName, setTempUserName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 

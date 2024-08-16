@@ -47,7 +47,11 @@ const ProblemDetail: React.FC = () => {
             defaultSize={50}
             className="rounded-[7px] border-[2px] border-[#555555]"
           >
-            <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode} />
+            <CodeEditor
+              onLanguageChange={setLanguage}
+              onCodeChange={setCode}
+              problemId={problem_id}
+            />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel

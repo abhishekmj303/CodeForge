@@ -8,7 +8,7 @@
   - [x] Run only runs current test case
   - [ ] Scrollable element
   - [ ] Total passed out of total test cases
-- [ ] Retain code after refresh
+- [x] Retain code after refresh
 - [x] Button animations: Run, Submit
 - [ ] Input field validation
 

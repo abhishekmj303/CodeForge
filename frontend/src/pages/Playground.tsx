@@ -84,7 +84,11 @@ const Playground: React.FC = () => {
       >
         <div className="flex flex-col h-full">
           <div className="flex-1">
-            <CodeEditor onLanguageChange={setLanguage} onCodeChange={setCode} />
+            <CodeEditor
+              onLanguageChange={setLanguage}
+              onCodeChange={setCode}
+              problemId="playground-0001"
+            />
           </div>
         </div>
       </ResizablePanel>

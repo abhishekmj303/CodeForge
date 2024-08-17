@@ -4,10 +4,10 @@
 
 - [x] Username
 - [ ] Problem InputOutput:
-  - [ ] Stats for each test case, along with total
+  - [x] Stats for each test case, along with total
   - [x] Run only runs current test case
   - [x] Scrollable element
-  - [ ] Total passed out of total test cases
+  - [x] Total passed out of total test cases
 - [x] Retain code after refresh
 - [x] Button animations: Run, Submit
 - [ ] Input field validation

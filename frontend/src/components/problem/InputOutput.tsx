@@ -16,6 +16,8 @@ interface TestCase {
   inputText: string;
   outputText: string;
   runText?: string;
+  elapsedTime?: number;
+  memoryUsage?: number;
 }
 
 interface Result {
@@ -108,6 +110,24 @@ const InputOutput: React.FC<InputOutputProps> = ({
     }));
   };
 
+  const handleElapsedTimeChange = (id: string, newElapsedTime: number) => {
+    setProblem((prev) => ({
+      ...prev,
+      examples: prev.examples.map((example) =>
+        example.id === id ? { ...example, elapsedTime: newElapsedTime } : example
+      ),
+    }));
+  };
+
+  const handleMemoryUsageChange = (id: string, newMemoryUsage: number) => {
+    setProblem((prev) => ({
+      ...prev,
+      examples: prev.examples.map((example) =>
+        example.id === id ? { ...example, memoryUsage: newMemoryUsage } : example
+      ),
+    }));
+  };
+
   const mapLanguage = (language: string) => {
     switch (language) {
       case "javascript":
@@ -130,6 +150,8 @@ const InputOutput: React.FC<InputOutputProps> = ({
         : String(activeTestCaseId + 1);
     const customInput = problem.examples[activeTestCaseId].inputText;
     var runText = "";
+    var elapsedTime = 0;
+    var memoryUsage = 0;
 
     setShowRunSpinner(true);
 
@@ -142,12 +164,17 @@ const InputOutput: React.FC<InputOutputProps> = ({
         username: sessionStorage.getItem("username"),
       });
       runText = response.data.stdout + response.data.stderr || "No output";
+      elapsedTime = response.data.elapsed_time;
+      memoryUsage = response.data.memory_usage;
+
     } catch (error) {
       console.error("Error running code:", error);
       runText = "An error occurred"; // Handle error cases
     }
     setSubResponse(null);
     handleRunTextChange(runningTestCaseId, runText);
+    handleElapsedTimeChange(runningTestCaseId, elapsedTime);
+    handleMemoryUsageChange(runningTestCaseId, memoryUsage);
     setShowRunSpinner(false);
   };
 
@@ -168,7 +195,15 @@ const InputOutput: React.FC<InputOutputProps> = ({
         const runText =
           response.data?.results[i]?.stdout +
             response.data?.results[i]?.stderr || "No output";
+
+        const elapsedTime = response.data?.results[i]?.elapsed_time ?? "N/A";
+        const memoryUsage = response.data?.results[i]?.memory_usage ?? "N/A";
+
         handleRunTextChange(String(i + 1), runText);
+        handleElapsedTimeChange(String(i + 1), elapsedTime);
+        handleMemoryUsageChange(String(i + 1), memoryUsage);
+
+
       }
     } catch (error) {
       console.error("Error submitting code:", error);
@@ -308,6 +343,18 @@ const InputOutput: React.FC<InputOutputProps> = ({
           {problem.examples.map((example, index) =>
             activeTestCaseId === index ? (
               <div key={example.id} className="font-semibold my-4 px-4">
+                {(example.elapsedTime !== undefined && example.memoryUsage !== undefined) && (
+                  <div className="flex flex-col">
+                    <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
+                      <p className="text-white">Execution Time:</p>
+                      <p>{example.elapsedTime !== undefined ? `${example.elapsedTime} sec` : "N/A"}</p>
+                    </div>
+                    <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
+                      <p className="text-white">Memory Usage:</p>
+                      <p>{example.memoryUsage !== undefined ? `${example.memoryUsage} MB` : "N/A"}</p>
+                    </div>
+                  </div>
+                )}
                 <p className="text-sm font-medium mt-4 text-gray-500">Input:</p>
                 <textarea
                   className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"

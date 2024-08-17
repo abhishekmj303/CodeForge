@@ -27,14 +27,22 @@ const AddProblem = () => {
   });
 
   const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(
-    null
+    0
   );
+
+  const [errors, setErrors] = useState({
+    title: "",
+    statement: "",
+    constraints: "",
+    testCases: "",
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: string
   ) => {
     setCurrentProblem((prev) => ({ ...prev, [field]: e.target.value }));
+    setErrors({ ...errors, [field]: "" });
   };
 
   const handleTestCaseChange = (
@@ -46,6 +54,7 @@ const AddProblem = () => {
       i === index ? { ...testCase, [field]: value } : testCase
     );
     setCurrentProblem((prev) => ({ ...prev, testCases: updatedTestCases }));
+    setErrors({ ...errors, testCases: "" });
   };
 
   const addTestCase = () => {
@@ -60,6 +69,7 @@ const AddProblem = () => {
   };
 
   const saveTestCase = () => {
+    if (!validateTestCase()) return;
     setEditTestCaseIndex(null);
   };
 
@@ -71,7 +81,55 @@ const AddProblem = () => {
     if (editTestCaseIndex === index) setEditTestCaseIndex(null);
   };
 
+  const validateProblem = () => {
+    let isValid = true;
+    const newErrors = {
+      title: "",
+      statement: "",
+      constraints: "",
+      testCases: "",
+    };
+
+    if (currentProblem.title.trim() === "") {
+      newErrors.title = "Title is required.";
+      isValid = false;
+    }
+    if (currentProblem.statement.trim() === "") {
+      newErrors.statement = "Statement is required.";
+      isValid = false;
+    }
+    if (currentProblem.constraints.trim() === "") {
+      newErrors.constraints = "Constraints are required.";
+      isValid = false;
+    }
+    if (currentProblem.testCases.some(
+      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
+    )) {
+      newErrors.testCases = "All test cases must have input and output.";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const validateTestCase = () => {
+    let isValid = true;
+    const newErrors = {
+      testCases: "",
+    };
+
+    if (currentProblem.testCases.some(
+      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
+    )) {
+      newErrors.testCases = "All test cases must have input and output.";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  }
+
   const saveProblem = async () => {
+    if (!validateProblem()) return;
     try {
       const username = sessionStorage.getItem("username");
       const response = await axiosInstance.post("/problems", {
@@ -83,15 +141,15 @@ const AddProblem = () => {
           input: testCase.input,
           output: testCase.output,
         })),
-        owner: username, // Replace with actual owner identifier
+        owner: username,
       });
 
       if (response.status === 200) {
-        // Handle successful save
+        
         console.log("Problem added successfully", response.data);
         window.location.reload();
       } else {
-        // Handle error response (non-200 status code)
+        
         console.error("Failed to add problem", response.data);
       }
     } catch (error) {
@@ -128,11 +186,12 @@ const AddProblem = () => {
               </Label>
               <Input
                 id="problem-title"
-                className="w-11/12 ml-1"
                 placeholder="Problem Title"
                 value={currentProblem.title}
                 onChange={(e) => handleInputChange(e, "title")}
+                className={`border ${errors.title ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 w-11/12 ml-1`}
               />
+              {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
             </div>
             <div className="space-y-1">
               <Label htmlFor="problem-statement" className="mb-1">
@@ -140,11 +199,12 @@ const AddProblem = () => {
               </Label>
               <Textarea
                 id="problem-statement"
-                className="w-11/12 ml-1"
                 placeholder="Problem Statement"
                 value={currentProblem.statement}
                 onChange={(e) => handleInputChange(e, "statement")}
+                className={`border ${errors.statement ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 w-11/12 ml-1`}
               />
+              {errors.statement && <p className="text-red-500 text-sm">{errors.statement}</p>}
             </div>
             <div className="space-y-1">
               <Label htmlFor="problem-difficulty" className="mb-1">
@@ -195,11 +255,12 @@ const AddProblem = () => {
               </Label>
               <Textarea
                 id="problem-constraints"
-                className="w-11/12 ml-1"
                 placeholder="Constraints"
                 value={currentProblem.constraints}
                 onChange={(e) => handleInputChange(e, "constraints")}
+                className={`border ${errors.constraints ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500 w-11/12 ml-1`}
               />
+              {errors.constraints && <p className="text-red-500 text-sm">{errors.constraints}</p>}
             </div>
             <div className="space-y-4 mt-4">
               <h3 className="font-semibold">Test Cases</h3>
@@ -216,6 +277,7 @@ const AddProblem = () => {
                           onChange={(e) =>
                             handleTestCaseChange(index, "input", e.target.value)
                           }
+                          className={`border ${errors.testCases ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                         />
                         <Label htmlFor={`test-output-${index}`}>Output</Label>
                         <Textarea
@@ -229,6 +291,7 @@ const AddProblem = () => {
                               e.target.value
                             )
                           }
+                          className={`border ${errors.testCases ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                         />
                         <Button
                           size="sm"
@@ -237,6 +300,7 @@ const AddProblem = () => {
                         >
                           Save Test Case
                         </Button>
+                        {errors.testCases && <p className="text-red-500 text-sm">{errors.testCases}</p>}
                       </>
                     ) : (
                       <>
@@ -276,14 +340,14 @@ const AddProblem = () => {
                 Add Test Case
               </Button>
             </div>
-            <DialogClose asChild>
+
               <Button
                 onClick={saveProblem}
                 className="mt-4 w-full bg-[#FFAD60] hover:bg-[#FFA250]"
               >
                 Add Problem
               </Button>
-            </DialogClose>
+
           </div>
         </ScrollArea>
       </DialogContent>

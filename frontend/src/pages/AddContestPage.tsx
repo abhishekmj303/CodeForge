@@ -30,7 +30,7 @@ export default function AddContestPage() {
   }, [navigate]);
 
   const [contestDetails, setContestDetails] = useState({
-    title: "",
+    contestTitle: "",
     details: "",
   });
   const [problems, setProblems] = useState([]);
@@ -38,21 +38,38 @@ export default function AddContestPage() {
   const [currentProblem, setCurrentProblem] = useState({
     title: "",
     statement: "",
-    difficulty: "Easy",
+    difficulty: "easy",
     constraints: "",
     testcases: [{ input: "", output: "" }],
   });
   const [isEditingDetails, setIsEditingDetails] = useState(true);
   const [editTestCaseIndex, setEditTestCaseIndex] = useState<number | null>(
-    null
+    0
   );
+  const [errors, setErrors] = useState({
+    contestTitle: "",
+    details: "",
+    title: "",
+    statement: "",
+    constraints: "",
+    testCases: "",
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     field: string
   ) => {
     setCurrentProblem({ ...currentProblem, [field]: e.target.value });
+    setErrors({ ...errors, [field]: "" });
   };
+
+  const handleContestDetailsChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: string
+  ) => {
+    setContestDetails({ ...contestDetails, [field]: e.target.value });
+    setErrors({ ...errors, [field]: "" });
+  }
 
   const handleDifficultyChange = (value: string) => {
     setCurrentProblem({ ...currentProblem, difficulty: value });
@@ -63,12 +80,83 @@ export default function AddContestPage() {
     field: string,
     value: string
   ) => {
+    console.log(index, field, value);
     const newTestcases = [...currentProblem.testcases];
     newTestcases[index][field] = value;
     setCurrentProblem({ ...currentProblem, testcases: newTestcases });
+    setErrors({ ...errors, testCases: "" });
   };
 
+  const validateContestDetails = () => {
+    let isValid = true;
+    const newErrors = {
+      contestTitle: "",
+      details: "",
+    };
+
+    if (contestDetails.contestTitle.trim() === "") {
+      newErrors.contestTitle = "Title is required.";
+      isValid = false;
+    }
+    if (contestDetails.details.trim() === "") {
+      newErrors.details = "Details are required.";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const validateProblem = () => {
+    let isValid = true;
+    const newErrors = {
+      title: "",
+      statement: "",
+      constraints: "",
+      testCases: "",
+    };
+
+    if (currentProblem.title.trim() === "") {
+      newErrors.title = "Title is required.";
+      isValid = false;
+    }
+    if (currentProblem.statement.trim() === "") {
+      newErrors.statement = "Statement is required.";
+      isValid = false;
+    }
+    if (currentProblem.constraints.trim() === "") {
+      newErrors.constraints = "Constraints are required.";
+      isValid = false;
+    }
+    if (currentProblem.testcases.some(
+      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
+    )) {
+      newErrors.testCases = "All test cases must have input and output.";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const validateTestCase = () => {
+    let isValid = true;
+    const newErrors = {
+      testCases: "",
+    };
+
+    if (currentProblem.testcases.some(
+      (testCase) => testCase.input.trim() === "" || testCase.output.trim() === ""
+    )) {
+      newErrors.testCases = "All test cases must have input and output.";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid;
+  }
+
   const saveProblem = () => {
+    if (!validateProblem()) return;
+
+  
     if (editIndex !== null) {
       const newProblems = [...problems];
       newProblems[editIndex] = currentProblem;
@@ -99,6 +187,7 @@ export default function AddContestPage() {
   };
 
   const saveContestDetails = () => {
+    if (!validateContestDetails()) return;
     setIsEditingDetails(false);
   };
 
@@ -116,6 +205,7 @@ export default function AddContestPage() {
   };
 
   const saveTestCase = () => {
+    if (!validateTestCase()) return;
     setEditTestCaseIndex(null);
   };
 
@@ -125,10 +215,10 @@ export default function AddContestPage() {
   };
 
   const submitNewContest = async () => {
+
     try {
-      // Create the contest
       const contestResponse = await axiosInstance.post("/contests", {
-        title: contestDetails.title,
+        title: contestDetails.contestTitle,
         details: contestDetails.details,
         owner: sessionStorage.getItem("username"),
       });
@@ -202,14 +292,13 @@ export default function AddContestPage() {
                     <Input
                       id="title"
                       placeholder="Contest Title"
-                      value={contestDetails.title}
-                      onChange={(e) =>
-                        setContestDetails({
-                          ...contestDetails,
-                          title: e.target.value,
-                        })
-                      }
+                      value={contestDetails.contestTitle}
+                      onChange={(e) => handleContestDetailsChange(e, "contestTitle")}
+                      className={`border ${errors.contestTitle ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                     />
+                    {errors.contestTitle && (
+                      <p className="text-red-500 text-sm">{errors.contestTitle}</p>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="details">Details</Label>
@@ -217,13 +306,13 @@ export default function AddContestPage() {
                       id="details"
                       placeholder="Contest Details"
                       value={contestDetails.details}
-                      onChange={(e) =>
-                        setContestDetails({
-                          ...contestDetails,
-                          details: e.target.value,
-                        })
+                      onChange={(e) => handleContestDetailsChange(e, "details")
                       }
+                      className={`border ${errors.details ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                     />
+                    {errors.details && (
+                      <p className="text-red-500 text-sm">{errors.details}</p>
+                    )}
                   </div>
                   <CardFooter>
                     <Button onClick={saveContestDetails} className="w-full">
@@ -235,7 +324,7 @@ export default function AddContestPage() {
                 <>
                   <div className="space-y-1">
                     <p>
-                      <strong>Title:</strong> {contestDetails.title}
+                      <strong>Title:</strong> {contestDetails.contestTitle}
                     </p>
                     <p>
                       <strong>Details:</strong> {contestDetails.details}
@@ -332,7 +421,11 @@ export default function AddContestPage() {
                     placeholder="Problem Title"
                     value={currentProblem.title}
                     onChange={(e) => handleInputChange(e, "title")}
+                    className={`border ${errors.title ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                   />
+                  {errors.title && (
+                    <p className="text-red-500 text-sm">{errors.title}</p>
+                  )}
                 </div>
                 <div className="space-y-1 m-2">
                   <Label htmlFor="problem-statement">Problem Statement</Label>
@@ -341,7 +434,11 @@ export default function AddContestPage() {
                     placeholder="Problem Statement"
                     value={currentProblem.statement}
                     onChange={(e) => handleInputChange(e, "statement")}
+                    className={`border ${errors.statement ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                   />
+                  {errors.statement && (
+                    <p className="text-red-500 text-sm">{errors.statement}</p>
+                  )}
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="problem-difficulty" className="mb-1">
@@ -391,7 +488,11 @@ export default function AddContestPage() {
                     placeholder="Problem Constraints"
                     value={currentProblem.constraints}
                     onChange={(e) => handleInputChange(e, "constraints")}
+                    className={`border ${errors.constraints ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                   />
+                  {errors.constraints && (
+                    <p className="text-red-500 text-sm">{errors.constraints}</p>
+                  )}
                 </div>
                 <div className="space-y-4 mt-2">
                   <h3 className="font-semibold">Test Cases</h3>
@@ -412,6 +513,7 @@ export default function AddContestPage() {
                                   e.target.value
                                 )
                               }
+                              className={`border ${errors.testCases ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                             />
                             <Label htmlFor={`test-output-${index}`}>
                               Output
@@ -427,6 +529,7 @@ export default function AddContestPage() {
                                   e.target.value
                                 )
                               }
+                              className={`border ${errors.testCases ? 'border-red-500' : 'border-gray-300'} focus:border-blue-500`}
                             />
                             <Button
                               size="sm"
@@ -435,6 +538,9 @@ export default function AddContestPage() {
                             >
                               Save Test Case
                             </Button>
+                            {errors.testCases && (
+                              <p className="text-red-500 text-sm">{errors.testCases}</p>
+                            )}
                           </>
                         ) : (
                           <>

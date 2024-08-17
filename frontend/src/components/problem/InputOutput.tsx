@@ -215,22 +215,21 @@ const InputOutput: React.FC<InputOutputProps> = ({
       </div>
       <ScrollArea className="h-full">
         <div className="h-[35rem]">
-          {subResponse && subResponse.is_solved ? (
+        { 
+          subResponse && subResponse.is_solved ? (
             <div className="flex items-start justify-between p-4">
               <div className="flex flex-col">
                 <p className="text-lg font-semibold text-green-500">
                   All test cases passed!
                 </p>
                 <p className="text-sm text-[#ffffff99]">
-                  Total test cases passed: {subResponse.total_passed}
+                  Total test cases passed: {subResponse.total_passed} / {problem.examples.length - 1}
                 </p>
               </div>
               <div className="flex flex-col mr-10">
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Execution Time:</p>
-                  <p>
-                    {subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}
-                  </p>
+                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
                 </div>
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Memory Usage:</p>
@@ -245,15 +244,13 @@ const InputOutput: React.FC<InputOutputProps> = ({
                   Some test cases failed!
                 </p>
                 <p className="text-sm text-[#ffffff99]">
-                  Total test cases passed: {subResponse.total_passed}
+                  Total test cases passed: {subResponse.total_passed} / {problem.examples.length - 1}
                 </p>
               </div>
               <div className="flex flex-col mr-10">
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Execution Time:</p>
-                  <p>
-                    {subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}
-                  </p>
+                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
                 </div>
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Memory Usage:</p>
@@ -261,8 +258,8 @@ const InputOutput: React.FC<InputOutputProps> = ({
                 </div>
               </div>
             </div>
-          ) : null}
-
+          ) : null
+        }
           <div className="flex mt-4 px-4">
             {problem.examples
               .filter((example) => example.id !== "custom")

@@ -1,5 +1,6 @@
 import os
 import resource
+import shutil
 import subprocess
 import tempfile
 import threading
@@ -48,9 +49,8 @@ def run_code(request_data: RunRequest) -> RunResponse:
     language = request_data.language
 
     # save tmp file
-    with tempfile.NamedTemporaryFile(
-        mode="w", prefix="codeforge_", suffix=f".{language.value}", delete=False
-    ) as f:
+    tempdir = tempfile.mkdtemp(prefix="codeforge_")
+    with open(os.path.join(tempdir, f"main.{language.value}"), "w") as f:
         print(source_code)
         f.write(source_code)
         file_name = f.name
@@ -65,6 +65,7 @@ def run_code(request_data: RunRequest) -> RunResponse:
         command = [
             "/bin/g++",
             "-I/usr/include/c++/13",
+            "-I/usr/include/c++/13/x86_64-suse-linux",
             file_name,
             "-o",
             f"{file_name}.out",
@@ -75,7 +76,7 @@ def run_code(request_data: RunRequest) -> RunResponse:
         return RunResponse(message="Invalid language")
 
     if language in COMPILED:
-        result = run_command(command, input_data)
+        result = run_command(command, input_data, tempdir)
         if result.message:
             return RunResponse(message=result.message)
 
@@ -88,8 +89,9 @@ def run_code(request_data: RunRequest) -> RunResponse:
 
         command = [f"{file_name}.out"]
 
-    result = run_command(command, input_data)
+    result = run_command(command, input_data, tempdir)
     # os.remove(file_name)
+    shutil.rmtree(tempdir)
 
     if result.message:
         return RunResponse(message=result.message)
@@ -105,10 +107,11 @@ def run_code(request_data: RunRequest) -> RunResponse:
     return result
 
 
-def run_command(command, input_string, timeout=2, memory_limit=1024):
+def run_command(command, input_string, tempdir, timeout=2, memory_limit=1024):
     def target(command, input_string):
         try:
-            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib/ -R /lib64/ -R /usr/ -R /etc/alternatives/ -B /tmp --keep_env --".split()
+            print(tempdir)
+            nsjail_cmd = f"nsjail -Mo -q --user 99999 --group 99999 --rlimit_as {memory_limit} --time_limit {timeout} -R /bin/ -R /lib/ -R /lib64/ -R /usr/ -R /etc/alternatives/ -B {tempdir} -D {tempdir} --keep_env --".split()
             time_cmd = ["/bin/time", "-a", "-f", "%E %M", "--"]
             # time_cmd = "/bin/time -a -f %E %M --"
             # command = ' '.join(command)

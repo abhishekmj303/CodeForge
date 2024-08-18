@@ -17,7 +17,7 @@
 
 ## Backend
 
-- [ ] Working C++
+- [x] Working C++
 - [x] Working Javascript
 - [x] problems/submit: elapsed time, memory usage
 <!-- - [ ] problems/run: all test cases + custom case -->

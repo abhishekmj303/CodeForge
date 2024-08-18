@@ -18,6 +18,7 @@ interface TestCase {
   runText?: string;
   elapsedTime?: number;
   memoryUsage?: number;
+  message?: string;
 }
 
 interface Result {
@@ -127,6 +128,15 @@ const InputOutput: React.FC<InputOutputProps> = ({
     }));
   };
 
+  const handleMessageChange = (id: string, newMessage: string) => {
+    setProblem((prev) => ({
+      ...prev,
+      examples: prev.examples.map((example) =>
+        example.id === id ? { ...example, message: newMessage } : example
+      ),
+    }));
+  }
+
   const mapLanguage = (language: string) => {
     switch (language) {
       case "javascript":
@@ -151,6 +161,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
     var runText = "";
     var elapsedTime = 0;
     var memoryUsage = 0;
+    var message = "";
 
     setShowRunSpinner(true);
 
@@ -165,6 +176,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
       runText = response.data.stdout + response.data.stderr || "No output";
       elapsedTime = response.data.elapsed_time;
       memoryUsage = response.data.memory_usage;
+      message = response.data.message;    
 
     } catch (error) {
       console.error("Error running code:", error);
@@ -174,6 +186,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
     handleRunTextChange(runningTestCaseId, runText);
     handleElapsedTimeChange(runningTestCaseId, elapsedTime);
     handleMemoryUsageChange(runningTestCaseId, memoryUsage);
+    handleMessageChange(runningTestCaseId, message);
     setShowRunSpinner(false);
   };
 
@@ -197,10 +210,12 @@ const InputOutput: React.FC<InputOutputProps> = ({
 
         const elapsedTime = response.data?.results[i]?.elapsed_time ?? "N/A";
         const memoryUsage = response.data?.results[i]?.memory_usage ?? "N/A";
+        const message = response.data?.results[i]?.message ?? "N/A";
 
         handleRunTextChange(String(i + 1), runText);
         handleElapsedTimeChange(String(i + 1), elapsedTime);
         handleMemoryUsageChange(String(i + 1), memoryUsage);
+        handleMessageChange(String(i + 1), message);
 
 
       }
@@ -342,6 +357,31 @@ const InputOutput: React.FC<InputOutputProps> = ({
           {problem.examples.map((example, index) =>
             activeTestCaseId === index ? (
               <div key={example.id} className="font-semibold my-4 px-4">
+                {/* do only if example.message is not undefined */}
+                {example.message === "Success" ? (
+                  <>
+                    {example.runText?.slice(0, -1) === example.outputText ? (
+                      <>
+                        <p className="text-lg font-semibold text-green-500">
+                          Test case passed!
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-lg font-semibold text-red-500">
+                          Test case failed!
+                        </p>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  example.message ? (
+                    <p className="text-lg font-semibold text-red-500">
+                      Test case failed! : {example.message}
+                    </p>
+                  ) : null
+                )}
+
                 {(example.elapsedTime !== undefined && example.memoryUsage !== undefined) && (
                   <div className="flex flex-col">
                     <div className="flex flex-row text-sm text-[#ffffff99] gap-1">

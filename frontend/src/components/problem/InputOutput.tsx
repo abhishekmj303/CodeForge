@@ -358,24 +358,18 @@ const InputOutput: React.FC<InputOutputProps> = ({
             activeTestCaseId === index ? (
               <div key={example.id} className="font-semibold my-4 px-4">
                 {/* do only if example.message is not undefined */}
-                {example.message === "Success" ? (
-                  <>
-                    {example.runText?.slice(0, -1) === example.outputText ? (
-                      <>
+                {example.id !== "custom" && example.message === "Success" ? (
+                    example.runText?.trim() === example.outputText.trim() ? (
                         <p className="text-lg font-semibold text-green-500">
                           Test case passed!
                         </p>
-                      </>
                     ) : (
-                      <>
                         <p className="text-lg font-semibold text-red-500">
                           Test case failed!
                         </p>
-                      </>
-                    )}
-                  </>
+                    )
                 ) : (
-                  example.message ? (
+                  example.id !== "custom" && example.message ? (
                     <p className="text-lg font-semibold text-red-500">
                       Test case failed! : {example.message}
                     </p>

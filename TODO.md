@@ -3,6 +3,8 @@
 ## Frontend
 
 - [x] Username
+- [ ] Playground:
+  - [ ] Time/Memory fixed position
 - [x] Problem InputOutput:
   - [x] Stats for each test case, along with total
   - [x] Run only runs current test case

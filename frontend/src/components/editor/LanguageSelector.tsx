@@ -9,10 +9,10 @@ import {
 import { ChevronDown } from "lucide-react";
 
 type Language =
-  | "javascript"
-  | "python"
-  | "c"
-  | "cpp";
+  | "JavaScript"
+  | "Python"
+  | "C"
+  | "C++";
 
 interface LanguageSelectorProps {
   language: Language;
@@ -20,10 +20,10 @@ interface LanguageSelectorProps {
 }
 
 const LANGUAGE_VERSIONS = {
-  javascript: "20",
-  python: "3.11",
-  c: "13",
-  cpp: "13",
+  JavaScript: "20",
+  Python: "3.11",
+  C: "13",
+  "C++": "13",
 };
 
 const languages = Object.entries(LANGUAGE_VERSIONS) as [Language, string][];

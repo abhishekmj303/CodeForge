@@ -10,7 +10,7 @@ const THEMES = {
 } as const;
 
 type Theme = keyof typeof THEMES;
-type Language = "javascript" | "python" | "c" | "cpp";
+type Language = "JavaScript" | "Python" | "C" | "C++";
 
 interface CodeEditorProps {
   onLanguageChange: (language: Language) => void;
@@ -25,14 +25,14 @@ const CodeEditor: FC<CodeEditorProps> = ({
 }) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const [value, setValue] = useState<string>("");
-  const [language, setLanguage] = useState<Language>("python");
+  const [language, setLanguage] = useState<Language>("Python");
   const [theme, setTheme] = useState<Theme>("vs-dark");
 
   const CODE_SNIPPETS: Record<Language, string> = {
-    javascript: `\nfunction greet(name) {\n\tconsole.log("Hello, " + name + "!");\n}\n\ngreet("Alex");\n`,
-    python: `\ndef greet(name):\n\tprint("Hello, " + name + "!")\n\ngreet("Alex")\n`,
-    c: `\n#include <stdio.h>\n\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`,
-    cpp: `\n#include <iostream>\n\nint main() {\n\tstd::cout << "Hello, World!" << std::endl;\n\treturn 0;\n}\n`,
+    JavaScript: `\nfunction greet(name) {\n\tconsole.log("Hello, " + name + "!");\n}\n\ngreet("Alex");\n`,
+    Python: `\ndef greet(name):\n\tprint("Hello, " + name + "!")\n\ngreet("Alex")\n`,
+    C: `\n#include <stdio.h>\n\nint main() {\n\tprintf("Hello, World!\\n");\n\treturn 0;\n}\n`,
+    "C++": `\n#include <iostream>\n\nint main() {\n\tstd::cout << "Hello, World!" << std::endl;\n\treturn 0;\n}\n`,
   };
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const CodeEditor: FC<CodeEditorProps> = ({
           }}
           height="calc(100vh - 60px)"
           theme={theme}
-          language={language}
+          language={language.toLowerCase().replace("++", "pp")}
           onMount={onMount}
           value={value}
           onChange={handleCodeChange}

@@ -139,16 +139,16 @@ const InputOutput: React.FC<InputOutputProps> = ({
 
   const mapLanguage = (language: string) => {
     switch (language) {
-      case "javascript":
+      case "JavaScript":
         return "js";
-      case "python":
+      case "Python":
         return "py";
-      case "c":
+      case "C":
         return "c";
-      case "cpp":
+      case "C++":
         return "cpp";
       default:
-        return "py"; // Default to Python if an unknown language is provided
+        return "py"; // default to Python if something goes wrong
     }
   };
 

@@ -50,7 +50,6 @@ const InputOutput: React.FC<InputOutputProps> = ({
     examples: [],
   });
   const [loading, setLoading] = useState(true);
-  const [runOutput, setRunOutput] = useState<string>(""); // Initialize as an empty string
 
   const [showRunSpinner, setShowRunSpinner] = useState<boolean>(false);
   const [showSubmitSpinner, setShowSubmitSpinner] = useState<boolean>(false);

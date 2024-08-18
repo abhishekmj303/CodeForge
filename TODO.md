@@ -3,9 +3,10 @@
 ## Frontend
 
 - [x] Username
-- [ ] Playground:
-  - [ ] Time/Memory fixed position
+- [x] Playground:
+  - [x] Time/Memory fixed position
 - [x] Problem InputOutput:
+  - [ ] Display `message` info like Success, TLE
   - [x] Stats for each test case, along with total
   - [x] Run only runs current test case
   - [x] Scrollable element

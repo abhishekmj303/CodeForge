@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/axiosInstance";
 import CodeEditor from "@/components/editor/CodeEditor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -121,11 +122,14 @@ const Playground: React.FC = () => {
                 </Button>
               </div>
               <div
-                className="w-full h-full p-2 border rounded bg-[#18181b] overflow-auto relative"
+                className="w-full h-full px-2 border rounded bg-[#18181b] overflow-auto relative"
                 style={{ whiteSpace: "pre-wrap" }}
               >
-                {outputValue}
-                <div className="absolute bottom-2 left-2 right-2 flex justify-between text-sm text-gray-400">
+                <ScrollArea className=" h-full w-full">
+                  {outputValue}
+                </ScrollArea>
+              </div>
+              <div className="bottom-2 left-2 right-2 flex justify-between text-md text-gray-400 p-2">
                   <span>
                     Execution Time:{" "}
                     {elapsedTime !== null ? `${elapsedTime}s` : "N/A"}
@@ -133,8 +137,7 @@ const Playground: React.FC = () => {
                   <span>
                     Memory Usage:{" "}
                     {memoryUsage !== null ? `${memoryUsage}MB` : "N/A"}
-                  </span>
-                </div>
+                </span>
               </div>
             </div>
           </ResizablePanel>

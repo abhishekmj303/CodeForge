@@ -114,7 +114,9 @@ const InputOutput: React.FC<InputOutputProps> = ({
     setProblem((prev) => ({
       ...prev,
       examples: prev.examples.map((example) =>
-        example.id === id ? { ...example, elapsedTime: newElapsedTime } : example
+        example.id === id
+          ? { ...example, elapsedTime: newElapsedTime }
+          : example
       ),
     }));
   };
@@ -123,7 +125,9 @@ const InputOutput: React.FC<InputOutputProps> = ({
     setProblem((prev) => ({
       ...prev,
       examples: prev.examples.map((example) =>
-        example.id === id ? { ...example, memoryUsage: newMemoryUsage } : example
+        example.id === id
+          ? { ...example, memoryUsage: newMemoryUsage }
+          : example
       ),
     }));
   };
@@ -135,7 +139,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
         example.id === id ? { ...example, message: newMessage } : example
       ),
     }));
-  }
+  };
 
   const mapLanguage = (language: string) => {
     switch (language) {
@@ -176,8 +180,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
       runText = response.data.stdout + response.data.stderr || "No output";
       elapsedTime = response.data.elapsed_time;
       memoryUsage = response.data.memory_usage;
-      message = response.data.message;    
-
+      message = response.data.message;
     } catch (error) {
       console.error("Error running code:", error);
       runText = "An error occurred"; // Handle error cases
@@ -216,8 +219,6 @@ const InputOutput: React.FC<InputOutputProps> = ({
         handleElapsedTimeChange(String(i + 1), elapsedTime);
         handleMemoryUsageChange(String(i + 1), memoryUsage);
         handleMessageChange(String(i + 1), message);
-
-
       }
     } catch (error) {
       console.error("Error submitting code:", error);
@@ -263,22 +264,24 @@ const InputOutput: React.FC<InputOutputProps> = ({
         </div>
       </div>
       <ScrollArea className="h-full">
-        <div className="h-[35rem]">
-        { 
-          subResponse && subResponse.is_solved ? (
+        <div className="h-screen">
+          {subResponse && subResponse.is_solved ? (
             <div className="flex items-start justify-between p-4">
               <div className="flex flex-col">
                 <p className="text-lg font-semibold text-green-500">
                   All test cases passed!
                 </p>
                 <p className="text-sm text-[#ffffff99]">
-                  Total test cases passed: {subResponse.total_passed} / {problem.examples.length - 1}
+                  Total test cases passed: {subResponse.total_passed} /{" "}
+                  {problem.examples.length - 1}
                 </p>
               </div>
               <div className="flex flex-col mr-10">
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Execution Time:</p>
-                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
+                  <p>
+                    {subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}
+                  </p>
                 </div>
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Memory Usage:</p>
@@ -293,13 +296,16 @@ const InputOutput: React.FC<InputOutputProps> = ({
                   Some test cases failed!
                 </p>
                 <p className="text-sm text-[#ffffff99]">
-                  Total test cases passed: {subResponse.total_passed} / {problem.examples.length - 1}
+                  Total test cases passed: {subResponse.total_passed} /{" "}
+                  {problem.examples.length - 1}
                 </p>
               </div>
               <div className="flex flex-col mr-10">
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Execution Time:</p>
-                  <p>{subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}</p>
+                  <p>
+                    {subResponse ? `${subResponse.elapsed_time} sec` : "N/A"}
+                  </p>
                 </div>
                 <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
                   <p className="text-white">Memory Usage:</p>
@@ -307,8 +313,7 @@ const InputOutput: React.FC<InputOutputProps> = ({
                 </div>
               </div>
             </div>
-          ) : null
-        }
+          ) : null}
           <div className="flex mt-4 px-4">
             {problem.examples
               .filter((example) => example.id !== "custom")
@@ -359,35 +364,42 @@ const InputOutput: React.FC<InputOutputProps> = ({
               <div key={example.id} className="font-semibold my-4 px-4">
                 {/* do only if example.message is not undefined */}
                 {example.id !== "custom" && example.message === "Success" ? (
-                    example.runText?.trim() === example.outputText.trim() ? (
-                        <p className="text-lg font-semibold text-green-500">
-                          Test case passed!
-                        </p>
-                    ) : (
-                        <p className="text-lg font-semibold text-red-500">
-                          Test case failed!
-                        </p>
-                    )
-                ) : (
-                  example.id !== "custom" && example.message ? (
-                    <p className="text-lg font-semibold text-red-500">
-                      Test case failed! : {example.message}
+                  example.runText?.trim() === example.outputText.trim() ? (
+                    <p className="text-lg font-semibold text-green-500">
+                      Test case passed!
                     </p>
-                  ) : null
-                )}
+                  ) : (
+                    <p className="text-lg font-semibold text-red-500">
+                      Test case failed!
+                    </p>
+                  )
+                ) : example.id !== "custom" && example.message ? (
+                  <p className="text-lg font-semibold text-red-500">
+                    Test case failed! : {example.message}
+                  </p>
+                ) : null}
 
-                {(example.elapsedTime !== undefined && example.memoryUsage !== undefined) && (
-                  <div className="flex flex-col">
-                    <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
-                      <p className="text-white">Execution Time:</p>
-                      <p>{example.elapsedTime !== undefined ? `${example.elapsedTime} sec` : "N/A"}</p>
+                {example.elapsedTime !== undefined &&
+                  example.memoryUsage !== undefined && (
+                    <div className="flex flex-col">
+                      <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
+                        <p className="text-white">Execution Time:</p>
+                        <p>
+                          {example.elapsedTime !== undefined
+                            ? `${example.elapsedTime} sec`
+                            : "N/A"}
+                        </p>
+                      </div>
+                      <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
+                        <p className="text-white">Memory Usage:</p>
+                        <p>
+                          {example.memoryUsage !== undefined
+                            ? `${example.memoryUsage} MB`
+                            : "N/A"}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-row text-sm text-[#ffffff99] gap-1">
-                      <p className="text-white">Memory Usage:</p>
-                      <p>{example.memoryUsage !== undefined ? `${example.memoryUsage} MB` : "N/A"}</p>
-                    </div>
-                  </div>
-                )}
+                  )}
                 <p className="text-sm font-medium mt-4 text-gray-500">Input:</p>
                 <textarea
                   className="w-full rounded-lg text-sm font-light border px-3 py-2 bg-[#27272a] border-transparent text-white mt-2"
